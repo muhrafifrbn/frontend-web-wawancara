@@ -91,7 +91,7 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   // Store token in cookie when auth state changes
-  useEffect(() => {
+useEffect(() => {
     if (state.isAuthenticated && state.token) {
       // Store token in cookie with secure settings
       Cookies.set('auth_token', state.token, { 
@@ -102,11 +102,14 @@ export const AuthProvider = ({ children }) => {
       
       // Set auth header for all requests
       api.defaults.headers.common['Authorization'] = `Bearer ${state.token}`;
-    } else if (!state.isAuthenticated) {
-      // Remove auth header
+      
+    } else if (!state.isAuthenticated && !state.isLoading) {
+      Cookies.remove('auth_token'); 
+      
+      // Remove auth header for all requests
       delete api.defaults.headers.common['Authorization'];
     }
-  }, [state.isAuthenticated, state.token]);
+  }, [state.isAuthenticated, state.token, state.isLoading]);
 
   return (
     <AuthContext.Provider value={{ state, dispatch }}>
