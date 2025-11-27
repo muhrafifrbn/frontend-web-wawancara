@@ -111,23 +111,23 @@ const Siswa = () => {
       <td className="px-6 py-4 text-gray-900">
         {new Date(item.created_at).toLocaleDateString('id-ID')}
       </td>
-      <td className='flex justify-center items-center py-6'>
+      <td className='flex items-center justify-center py-6'>
         <div className='flex items-center justify-between gap-x-5'>
-          <button onClick={() => handleOpenModal(item.id)} className="text-red-700 hover:text-red-500 cursor-pointer">
+          <button onClick={() => handleOpenModal(item.id)} className="text-red-700 cursor-pointer hover:text-red-500">
             <FaEye size={18} />
           </button>
           <button
             onClick={() => navigate(`/hasilSiswa/${item.id}`, { state: { childName: item.student_name } })}
-            className="text-red-700 hover:text-red-500 cursor-pointer"
+            className="text-red-700 cursor-pointer hover:text-red-500"
           >
             <FaFilePdf size={18} />
           </button>
           {isAdmin && (  
             <>
-              <button onClick={() => handleOpenEditModal(item.id) }className="text-red-700 hover:text-red-500 cursor-pointer">
+              <button onClick={() => handleOpenEditModal(item.id) }className="text-red-700 cursor-pointer hover:text-red-500">
                 <FaFilePen size={18} />
               </button>
-              <button onClick={() => handleDelete(item.id)} className="text-red-700 hover:text-red-500 cursor-pointer">
+              <button onClick={() => handleDelete(item.id)} className="text-red-700 cursor-pointer hover:text-red-500">
                 <FaTrash size={18} />
               </button>
             </>
@@ -158,7 +158,7 @@ const Siswa = () => {
         >
           {isLoading && (
             <tr>
-              <td colSpan={headTable.length} className="text-center py-4">
+              <td colSpan={headTable.length} className="py-4 text-center">
                 Loading...
               </td>
             </tr>
