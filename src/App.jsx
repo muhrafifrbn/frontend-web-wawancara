@@ -56,7 +56,7 @@ const App = () => {
               <Route path="/hasilMedical/:id" element={<HasilMedical />} />
               <Route path="/hasilOrtu" element={<HasilOrtu />} />
               <Route path='/user' element={<User />} />
-              <Route path='/add-user' element={<AddUser />} /> 
+              <Route path='/add-user' element={<AddUser />} />
               <Route path="/logging" element={<Logging />} />
               <Route path="/hasilOrtu/:id" element={<HasilOrtu />} />
             </Route>
