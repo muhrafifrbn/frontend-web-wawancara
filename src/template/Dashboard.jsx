@@ -58,7 +58,7 @@ const Dashboard = ({ title, children }) => {
   const menuAdmin = [
     { name: "Dashboard", ic: <FaHouse />, to: "/dashboard" },
     {
-      name: "Info Pendaftaran",
+      name: "Informasi Pendaftaran",
       ic: <FaFileWaveform />,
       to: "/informasi-pendaftaran",
     },

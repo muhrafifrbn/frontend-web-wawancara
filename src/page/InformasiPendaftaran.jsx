@@ -189,7 +189,10 @@ const InformasiPendaftaran = () => {
         </Tabel>
 
         {showModal && (
-          <DetailSiswa id={selectedId} onClose={() => setShowModal(false)} />
+          <DetailInformasiPendaftaran
+            id={selectedId}
+            onClose={() => setShowModal(false)}
+          />
         )}
 
         {showEditModal && (
