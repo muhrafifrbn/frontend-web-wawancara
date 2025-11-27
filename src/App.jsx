@@ -27,6 +27,7 @@ import Landingpage from './page/LandingPage/Landingpage';
 import RegistratorDashboard from './page/Registrator/RegistratorDashboard'
 import { RegistratorRoute } from './utils/middleware/ProtectedRoute';
 import DataLandingPage from './page/Registrator/DataLandingPage';
+import InformasiPendaftaran from './page/InformasiPendaftaran';
 
 const App = () => {
   return (
@@ -41,7 +42,7 @@ const App = () => {
             {/* Protected routes for any authenticated user */}
             <Route element={<ProtectedRoute />}>
               <Route path="/home" element={<Home />} />
-             
+
               <Route path="/siswa" element={<Siswa />} />
               <Route path="/ortu" element={<Ortu />} />
               <Route path="/form-siswa-1" element={<ForumSiswa />} />
@@ -56,6 +57,7 @@ const App = () => {
               <Route path="/hasilMedical/:id" element={<HasilMedical />} />
               <Route path="/hasilOrtu" element={<HasilOrtu />} />
               <Route path='/user' element={<User />} />
+              <Route path='/informasi-pendaftaran' element={<InformasiPendaftaran />} />
               <Route path='/add-user' element={<AddUser />} /> 
               <Route path="/logging" element={<Logging />} />
               <Route path="/hasilOrtu/:id" element={<HasilOrtu />} />
