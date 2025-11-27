@@ -12,8 +12,9 @@ const DetailInformasiPendaftaran = ({ id, onClose }) => {
   useEffect(() => {
     const fetchDetail = async () => {
       try {
-        const response = await get(`/parents/detail/${id}`);
-        setDetail(response);
+        const response = await get(`/information/registration/${id}`);
+        console.log(response.data);
+        setDetail(response.data);
       } catch (error) {
         console.error("Gagal mengambil data:", error);
       } finally {
@@ -23,6 +24,8 @@ const DetailInformasiPendaftaran = ({ id, onClose }) => {
     fetchDetail();
   }, [id]);
 
+  //   console.log(detail);
+
   return (
     <ModalContainer
       title="Detail Data Informasi Pendaftaran"
@@ -31,22 +34,29 @@ const DetailInformasiPendaftaran = ({ id, onClose }) => {
     >
       {loading ? (
         <LoadingSpinner />
+      ) : detail ? (
+        <div className="space-y-8">
+          <InfoSection title="Informasi Pendaftaran">
+            <InfoItem label="Nama Gelombang" value={detail.nama_gelombang} />
+            <InfoItem
+              label="Tanggal Mulai"
+              value={new Date(detail.tanggal_mulai).toLocaleDateString("id-ID")}
+            />
+            <InfoItem
+              label="Tanggal Akhir"
+              value={new Date(detail.tanggal_mulai).toLocaleDateString("id-ID")}
+            />
+            <InfoItem label="Tahun Ajaran" value={detail.tahun_ajaran} />
+            <InfoItem label="Kouta" value={detail.kouta} />
+            <InfoItem
+              label="Status Gelombang"
+              value={detail.status_gelombang}
+            />
+          </InfoSection>
+          <InfoItem label="Deskripsi" value={detail.deskripsi} />
+        </div>
       ) : (
-        detail && (
-          <div className="space-y-8">
-            <InfoItem title="Informasi Pendaftaran">
-              <InfoItem label="Gelombang" value={detail.nama_gelombang} />
-              <InfoItem label="Tanggal Mulai" value={detail.tanggal_mulai} />
-              <InfoItem label="Tanggal Akhir" value={detail.tanggal_akhir} />
-              <InfoItem label="Tahun Ajaran" value={detail.tahun_ajaran} />
-              <InfoItem label="Kouta" value={detail.kouta} />
-              <InfoItem
-                label="Status Gelombang"
-                value={detail.status_gelombang}
-              />
-            </InfoItem>
-          </div>
-        )
+        <div className="">gagal bosku</div>
       )}
     </ModalContainer>
   );

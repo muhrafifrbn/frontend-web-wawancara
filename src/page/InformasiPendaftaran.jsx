@@ -49,8 +49,8 @@ const InformasiPendaftaran = () => {
   };
 
   const handleDelete = DeleteConfirmation({
-    onDelete: (id) => deleteData(`/user/delete/${id}`),
-    itemName: "data user",
+    onDelete: (id) => deleteData(`/information/registration/${id}`),
+    itemName: "data informasi pendaftaran",
     onSuccess: (id) => {
       setData(data.filter((item) => item.user_id !== id));
       setSuccessMsg("Data user berhasil dihapus");
@@ -207,6 +207,5 @@ const InformasiPendaftaran = () => {
     </Dashboard>
   );
 };
-
 
 export default InformasiPendaftaran;
