@@ -3,9 +3,9 @@
 /* eslint-disable react/prop-types */
 // Context/AuthContext.js
 import { createContext, useReducer, useEffect } from "react";
-import Cookies from 'js-cookie';
-import { verifyToken } from '../utils/tokenValidator';
-import api from '../utils/api';
+import Cookies from "js-cookie";
+import { verifyToken } from "../utils/tokenValidator";
+import api from "../utils/api";
 
 export const AuthContext = createContext();
 
@@ -14,7 +14,7 @@ const initialState = {
   user: null,
   token: null,
   role: null,
-  isLoading: true
+  isLoading: true,
 };
 
 const authReducer = (state, action) => {
@@ -26,7 +26,7 @@ const authReducer = (state, action) => {
         full_name: action.payload.full_name,
         token: action.payload.token,
         role: action.payload.role,
-        isLoading: false
+        isLoading: false,
       };
     case "AUTH_ERROR":
     case "LOGOUT":
@@ -35,17 +35,17 @@ const authReducer = (state, action) => {
         user: null,
         token: null,
         role: null,
-        isLoading: false
+        isLoading: false,
       };
     case "LOADING":
       return {
         ...state,
-        isLoading: true
+        isLoading: true,
       };
     case "LOADED":
       return {
         ...state,
-        isLoading: false
+        isLoading: false,
       };
     default:
       return state;
@@ -59,61 +59,56 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const loadAuth = async () => {
       dispatch({ type: "LOADING" });
-      const token = Cookies.get('auth_token');
-      
+      const token = Cookies.get("auth_token");
+
       if (token) {
         const userData = verifyToken(token);
-        
+
         if (userData) {
           // Set auth headers for all future requests
-          api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-          
+          api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+
           dispatch({
             type: "LOGIN_SUCCESS",
             payload: {
               full_name: userData.full_name,
               username: userData.username,
               token: token,
-              role: userData.role
-            }
+              role: userData.role,
+            },
           });
         } else {
           // Token invalid, clear it
-          Cookies.remove('auth_token');
+          Cookies.remove("auth_token");
           dispatch({ type: "AUTH_ERROR" });
         }
       } else {
         dispatch({ type: "LOADED" });
       }
     };
-    
+
     loadAuth();
   }, []);
 
   // Store token in cookie when auth state changes
-useEffect(() => {
+  useEffect(() => {
     if (state.isAuthenticated && state.token) {
       // Store token in cookie with secure settings
-      Cookies.set('auth_token', state.token, { 
-        expires: 7, 
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict'
+      Cookies.set("auth_token", state.token, {
+        expires: 7,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
       });
-      
+
       // Set auth header for all requests
-      api.defaults.headers.common['Authorization'] = `Bearer ${state.token}`;
-      
+      api.defaults.headers.common["Authorization"] = `Bearer ${state.token}`;
     } else if (!state.isAuthenticated && !state.isLoading) {
-      Cookies.remove('auth_token'); 
-      
+      Cookies.remove("auth_token");
+      Cookies.remove("refreshToken");
       // Remove auth header for all requests
-      delete api.defaults.headers.common['Authorization'];
+      delete api.defaults.headers.common["Authorization"];
     }
   }, [state.isAuthenticated, state.token, state.isLoading]);
 
-  return (
-    <AuthContext.Provider value={{ state, dispatch }}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={{ state, dispatch }}>{children}</AuthContext.Provider>;
 };
