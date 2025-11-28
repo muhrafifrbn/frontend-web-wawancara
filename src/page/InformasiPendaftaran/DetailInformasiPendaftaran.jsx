@@ -14,7 +14,7 @@ const DetailInformasiPendaftaran = ({ id, onClose }) => {
       try {
         const response = await get(`/information/registration/${id}`);
         console.log(response.data);
-        setDetail(response.data);
+        setDetail(response.data);   
       } catch (error) {
         console.error("Gagal mengambil data:", error);
       } finally {
