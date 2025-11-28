@@ -30,6 +30,7 @@ const AddInformasiPendaftaran = () => {
     e.preventDefault();
     setIsSubmitting(true);
     setError("");
+    console.log(formData);
 
     // Validate dates
     if (new Date(formData.start_date) >= new Date(formData.end_date)) {
@@ -39,11 +40,11 @@ const AddInformasiPendaftaran = () => {
     }
 
     try {
-      await post("/informasi-pendaftaran/create", {
-        title: formData.title,
-        description: formData.description,
-        start_date: formData.start_date,
-        end_date: formData.end_date,
+      await post("/information/registration/", {
+        nama_gelombang: formData.title,
+        deskripsi: formData.description,
+        tanggal_mulai: formData.start_date,
+        tanggal_akhir: formData.end_date,
         is_active: formData.is_active ? 1 : 0,
       });
 
@@ -60,7 +61,9 @@ const AddInformasiPendaftaran = () => {
     <Dashboard title="Tambah Informasi Pendaftaran">
       <div className="w-full bg-white rounded-lg shadow-md">
         <div className="p-6 border-b">
-          <h2 className="text-xl font-semibold">Form Tambah Informasi Pendaftaran</h2>
+          <h2 className="text-xl font-semibold">
+            Form Tambah Informasi Pendaftaran
+          </h2>
           <p className="mt-1 text-sm text-gray-600">
             Tambahkan informasi lengkap untuk pendaftaran baru
           </p>
@@ -74,7 +77,9 @@ const AddInformasiPendaftaran = () => {
 
         <form onSubmit={handleSubmit} className="p-6 space-y-6 text-gray-600">
           <div className="pb-6 border-b">
-            <h3 className="mb-4 text-lg font-semibold">Informasi Pendaftaran</h3>
+            <h3 className="mb-4 text-lg font-semibold">
+              Informasi Pendaftaran
+            </h3>
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <div className="mb-4 md:col-span-2">
                 <label

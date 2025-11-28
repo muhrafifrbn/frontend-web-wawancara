@@ -197,7 +197,7 @@ const InformasiPendaftaran = () => {
         )}
 
         {showEditModal && (
-          <EditSiswa
+          <EditInformasiPendaftaran
             id={selectedId}
             onClose={() => setShowEditModal(false)}
             onUpdate={fetchData}
