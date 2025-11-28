@@ -10,6 +10,7 @@ import {
   FaClockRotateLeft,
   FaUserGear,
   FaFileWaveform,
+  FaRegPenToSquare,
 } from "react-icons/fa6";
 import img from "../images/logo.png";
 import { Link } from "react-router-dom";
@@ -61,6 +62,11 @@ const Dashboard = ({ title, children }) => {
       name: "Informasi Pendaftaran",
       ic: <FaFileWaveform />,
       to: "/informasi-pendaftaran",
+    },
+    {
+      name: "Informasi Tes",
+      ic: <FaRegPenToSquare />,
+      to: "/informasi-tes",
     },
     { name: "Orang Tua", ic: <FaUser />, to: "/ortu" },
     { name: "Siswa", ic: <FaGraduationCap />, to: "/siswa" },

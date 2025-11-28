@@ -54,6 +54,7 @@ const AddInformasiPendaftaran = () => {
       });
     } catch (err) {
       setError("Gagal menambahkan informasi pendaftaran. Silakan coba lagi.");
+      console.log(formData);
       console.log(err);
       setIsSubmitting(false);
     }

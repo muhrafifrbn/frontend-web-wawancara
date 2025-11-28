@@ -9,7 +9,6 @@ import useTitle from "../utils/useTitle";
 import { sortLatedData } from "../utils/sortLatedData";
 import { AuthContext } from "../Context/AuthContext";
 import DeleteConfirmation from "../components/Notification/DeleteConfirmation";
-import AddInformasiPendaftaran from "./InformasiPendaftaran/AddInformasiPendaftaran";
 import DetailInformasiPendaftaran from "./InformasiPendaftaran/DetailInformasiPendaftaran";
 import EditInformasiPendaftaran from "./InformasiPendaftaran/EditInformasiPendaftaran";
 

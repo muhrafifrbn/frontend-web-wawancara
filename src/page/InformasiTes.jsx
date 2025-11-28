@@ -9,15 +9,13 @@ import useTitle from "../utils/useTitle";
 import { sortLatedData } from "../utils/sortLatedData";
 import { AuthContext } from "../Context/AuthContext";
 import DeleteConfirmation from "../components/Notification/DeleteConfirmation";
-
-// Dummy components for modal (not provided in original file)
-const DetailInformasiTes = ({ id, onClose }) => null;
-const EditInformasiTes = ({ id, onClose, onUpdate }) => null;
+import DetailInformasiTes from "./InformasiTes/DetailnformasiTes";
+import EditInformasiTes from "./InformasiTes/EditInformasiTes";
 
 const InformasiTes = () => {
   useTitle("Informasi Tes");
   const location = useLocation();
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const [successMsg, setSuccessMsg] = useState(location.state?.successMsg);
   const [errorMsg, setErrorMsg] = useState(location.state?.errorMsg);
   const [data, setData] = useState([]);
@@ -49,8 +47,9 @@ const InformasiTes = () => {
     setShowEditModal(true);
   };
 
+  // ubah endpoint buat fungsi hapus
   const handleDelete = DeleteConfirmation({
-    onDelete: (id) => deleteData(`/information/test/delete/${id}`),
+    onDelete: (id) => deleteData(`/information/test/${id}`),
     itemName: "data informasi tes",
     onSuccess: (id) => {
       setData(data.filter((item) => item.id !== id));
@@ -68,22 +67,14 @@ const InformasiTes = () => {
     { judul: "Aksi" },
   ];
 
-  // Dummy data based on headTable
-  const dummyData = [
-    { id: 1, nama_tes: "Tes Potensi Akademik", deskripsi_tes: "Mengukur kemampuan akademik calon mahasiswa" },
-    { id: 2, nama_tes: "Tes Bahasa Inggris", deskripsi_tes: "Menilai kemampuan bahasa Inggris dasar" },
-    { id: 3, nama_tes: "Tes Wawancara", deskripsi_tes: "Wawancara untuk menilai motivasi dan komunikasi" },
-    { id: 4, nama_tes: "Tes Kepribadian", deskripsi_tes: "Menilai karakter dan kepribadian calon mahasiswa" },
-    { id: 5, nama_tes: "Tes Kemampuan Dasar", deskripsi_tes: "Mengukur kemampuan dasar dalam berbagai bidang" },
-  ];
-
+  // Fetch data dari database
   const fetchData = async () => {
     try {
-      // Simulate API call with dummy data
-      setTimeout(() => {
-        setData(dummyData);
-        setIsLoading(false);
-      }, 500);
+      const response = await get("/information/test");
+      const sortedData = sortLatedData(response.data);
+
+      setData(sortedData);
+      setIsLoading(false);
     } catch (err) {
       setErrorMsg("Gagal Mengambil Data");
       setIsLoading(false);
@@ -137,9 +128,7 @@ const InformasiTes = () => {
 
   return (
     <Dashboard title="Informasi Tes">
-      <h1 className="text-2xl font-bold text-gray-900">
-        Informasi Tes
-      </h1>
+      <h1 className="text-2xl font-bold text-gray-900">Informasi Tes</h1>
 
       <div className="flex flex-col justify-between w-full min-h-[700px] xl:min-h-[calc(100vh-130px)]">
         {successMsg && (
