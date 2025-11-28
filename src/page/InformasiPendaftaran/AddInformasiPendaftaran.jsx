@@ -8,11 +8,12 @@ const AddInformasiPendaftaran = () => {
   useTitle("Tambah Informasi Pendaftaran - Dashboard");
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    title: "",
-    description: "",
-    start_date: "",
-    end_date: "",
-    is_active: true,
+    nama_gelombang: "",
+    deskripsi: "",
+    tanggal_mulai: "",
+    tanggal_akhir: "",
+    status_gelombang: true,
+    kouta: 100,
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
@@ -33,19 +34,19 @@ const AddInformasiPendaftaran = () => {
     console.log(formData);
 
     // Validate dates
-    if (new Date(formData.start_date) >= new Date(formData.end_date)) {
+    if (new Date(formData.tanggal_mulai) >= new Date(formData.tanggal_akhir)) {
       setError("Tanggal selesai harus setelah tanggal mulai");
       setIsSubmitting(false);
       return;
     }
 
     try {
-      await post("/information/registration/", {
-        nama_gelombang: formData.title,
-        deskripsi: formData.description,
-        tanggal_mulai: formData.start_date,
-        tanggal_akhir: formData.end_date,
-        is_active: formData.is_active ? 1 : 0,
+      await post("/information/registration/create", {
+        nama_gelombang: formData.nama_gelombang,
+        deskripsi: formData.deskripsi,
+        tahun_ajaran: formData.tahun_ajaran,
+        tanggal_mulai: formData.tanggal_mulai,
+        tanggal_akhir: formData.tanggal_akhir,
       });
 
       navigate("/informasi-pendaftaran", {
@@ -53,6 +54,7 @@ const AddInformasiPendaftaran = () => {
       });
     } catch (err) {
       setError("Gagal menambahkan informasi pendaftaran. Silakan coba lagi.");
+      console.log(err);
       setIsSubmitting(false);
     }
   };
@@ -86,18 +88,21 @@ const AddInformasiPendaftaran = () => {
                   htmlFor="title"
                   className="block mb-2 font-medium text-md"
                 >
-                  Judul
+                  Gelombang
                 </label>
-                <input
-                  type="text"
-                  id="title"
-                  name="title"
-                  value={formData.title}
+                <select
+                  id="nama_gelombang"
+                  name="nama_gelombang"
+                  value={formData.nama_gelombang}
                   onChange={handleChange}
                   className="shadow-sm bg-white border-[2px] border-gray-300 outline-none text-sm rounded-md focus:ring-red-500 focus:border-red-500 block w-full p-2.5 h-12"
-                  placeholder="Masukkan judul informasi"
                   required
-                />
+                >
+                  <option value="">Pilih Gelombang</option>
+                  <option value="Gelombang 1">Gelombang 1</option>
+                  <option value="Gelombang 2">Gelombang 2</option>
+                  <option value="Gelombang 3">Gelombang 3</option>
+                </select>
               </div>
 
               <div className="mb-4 md:col-span-2">
@@ -108,9 +113,9 @@ const AddInformasiPendaftaran = () => {
                   Deskripsi
                 </label>
                 <textarea
-                  id="description"
-                  name="description"
-                  value={formData.description}
+                  id="deskripsi"
+                  name="deskripsi"
+                  value={formData.deskripsi}
                   onChange={handleChange}
                   rows={4}
                   className="shadow-sm bg-white border-[2px] border-gray-300 outline-none text-sm rounded-md focus:ring-red-500 focus:border-red-500 block w-full p-2.5"
@@ -121,16 +126,35 @@ const AddInformasiPendaftaran = () => {
 
               <div className="mb-4">
                 <label
-                  htmlFor="start_date"
+                  htmlFor="tahun_ajaran"
+                  className="block mb-2 font-medium text-md"
+                >
+                  Tahun Ajaran
+                </label>
+                <input
+                  type="text"
+                  id="tahun_ajaran"
+                  name="tahun_ajaran"
+                  value={formData.tahun_ajaran}
+                  onChange={handleChange}
+                  className="shadow-sm bg-white border-[2px] border-gray-300 outline-none text-sm rounded-md focus:ring-red-500 focus:border-red-500 block w-full p-2.5 h-12"
+                  placeholder="Contoh: 2024/2025"
+                  required
+                />
+              </div>
+
+              <div className="mb-4">
+                <label
+                  htmlFor="tanggal_mulai"
                   className="block mb-2 font-medium text-md"
                 >
                   Tanggal Mulai
                 </label>
                 <input
                   type="date"
-                  id="start_date"
-                  name="start_date"
-                  value={formData.start_date}
+                  id="tanggal_mulai"
+                  name="tanggal_mulai"
+                  value={formData.tanggal_mulai}
                   onChange={handleChange}
                   className="shadow-sm bg-white border-[2px] border-gray-300 outline-none text-sm rounded-md focus:ring-red-500 focus:border-red-500 block w-full p-2.5 h-12"
                   required
@@ -139,33 +163,20 @@ const AddInformasiPendaftaran = () => {
 
               <div className="mb-4">
                 <label
-                  htmlFor="end_date"
+                  htmlFor="tanggal_akhir"
                   className="block mb-2 font-medium text-md"
                 >
                   Tanggal Selesai
                 </label>
                 <input
                   type="date"
-                  id="end_date"
-                  name="end_date"
-                  value={formData.end_date}
+                  id="tanggal_akhir"
+                  name="tanggal_akhir"
+                  value={formData.tanggal_akhir}
                   onChange={handleChange}
                   className="shadow-sm bg-white border-[2px] border-gray-300 outline-none text-sm rounded-md focus:ring-red-500 focus:border-red-500 block w-full p-2.5 h-12"
                   required
                 />
-              </div>
-
-              <div className="mb-4 md:col-span-2">
-                <label className="inline-flex items-center">
-                  <input
-                    type="checkbox"
-                    name="is_active"
-                    checked={formData.is_active}
-                    onChange={handleChange}
-                    className="w-4 h-4 text-red-600 bg-gray-100 border-gray-300 rounded focus:ring-red-500"
-                  />
-                  <span className="ml-2 text-sm font-medium">Aktif</span>
-                </label>
               </div>
             </div>
           </div>
