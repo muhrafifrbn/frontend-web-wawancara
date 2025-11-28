@@ -59,9 +59,8 @@ const EditInformasiPendaftaran = ({ id, onClose, onUpdate }) => {
       onUpdate(); // Refresh data di parent component
       setMessage("Data berhasil diupdate");
       setTimeout(() => {
-        onClose();  // Tutup modal
+        onClose(); // Tutup modal
       }, 1000);
-      
     } catch (error) {
       console.error("Gagal menyimpan data:", error);
       console.log(dataToSubmit);
@@ -99,115 +98,127 @@ const EditInformasiPendaftaran = ({ id, onClose, onUpdate }) => {
 
   return (
     <ModalContainer
-        title="Edit Data Informasi Pendaftaran"
-        subtitle="Edit informasi lengkap data Informasi Pendaftaran"
-        onClose={onClose}
-        primaryButton={primaryButton}
-        secondaryButton={secondaryButton}
+      title="Edit Data Informasi Pendaftaran"
+      subtitle="Edit informasi lengkap data Informasi Pendaftaran"
+      onClose={onClose}
+      primaryButton={primaryButton}
+      secondaryButton={secondaryButton}
+      msg={message}
     >
-        {message && (
-          <div className="mb-4 p-3 text-sm text-green-700 bg-green-100 border border-green-400 rounded">
-            {message}
+      <form onSubmit={handleSubmit}>
+        <div className="grid grid-cols-2 gap-4">
+          <div className="col-span-2">
+            <label
+              htmlFor="nama_gelombang"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Nama Gelombang
+            </label>
+            <select
+              id="nama_gelombang"
+              name="nama_gelombang"
+              value={formData?.nama_gelombang || ""}
+              onChange={handleSelectChange}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500"
+              required
+            >
+              <option value="">Pilih Gelombang</option>
+              <option value="Gelombang 1">Gelombang 1</option>
+              <option value="Gelombang 2">Gelombang 2</option>
+              <option value="Gelombang 3">Gelombang 3</option>
+            </select>
           </div>
-        )}
-        <form onSubmit={handleSubmit}>
-          <div className="grid grid-cols-2 gap-4">
-            <div className="col-span-2">
-              <label htmlFor="nama_gelombang" className="block text-sm font-medium text-gray-700">
-                Nama Gelombang
-              </label>
-              <select
-                id="nama_gelombang"
-                name="nama_gelombang"
-                value={formData?.nama_gelombang || ""}
-                onChange={handleSelectChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500"
-                required
-              >
-                <option value="">Pilih Gelombang</option>
-                <option value="Gelombang 1">Gelombang 1</option>
-                <option value="Gelombang 2">Gelombang 2</option>
-                <option value="Gelombang 3">Gelombang 3</option>
-              </select>
-            </div>
-            <div className="col-span-2">
-              <label htmlFor="tanggal_mulai" className="block text-sm font-medium text-gray-700">
-                Tanggal Mulai
-              </label>
-              <input
-                type="date"
-                id="tanggal_mulai"
-                name="tanggal_mulai"
-                value={formatDateForInput(formData.tanggal_mulai)}
-                onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500"
-                required
-              />
-            </div>
-            <div className="col-span-2">
-              <label htmlFor="tanggal_akhir" className="block text-sm font-medium text-gray-700">
-                Tanggal Selesai
-              </label>
-              <input
-                type="date"
-                id="tanggal_akhir"
-                name="tanggal_akhir"
-                value={formatDateForInput(formData.tanggal_akhir)}
-                onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500"
-                required
-              />
-            </div>
-            <div className="col-span-2">
-              <label htmlFor="tahun_ajaran" className="block text-sm font-medium text-gray-700">
-                Tahun Ajaran
-              </label>
-              <input
-                type="text"
-                id="tahun_ajaran"
-                name="tahun_ajaran"
-                value={formData?.tahun_ajaran || ""}
-                onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500"
-                required
-              />
-            </div>
-            <div className="col-span-2">
-              <label htmlFor="status_gelombang" className="block text-sm font-medium text-gray-700">
-                Status Gelombang
-              </label>
-              <select
-                id="status_gelombang"
-                name="status_gelombang"
-                value={formData?.status_gelombang || ""}
-                onChange={handleSelectChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500"
-                required
-              >
-                <option value="">Pilih Status Gelombang</option>
-                <option value="Aktif">Aktif</option>
-                <option value="Tidak Aktif">Tidak Aktif</option>
-              </select>
-            </div>
-            <div className="col-span-2">
-              <label htmlFor="deskripsi" className="block text-sm font-medium text-gray-700">
-                Deskripsi
-              </label>
-              <textarea
-                id="deskripsi"
-                name="deskripsi"
-                value={formData?.deskripsi || ""}
-                onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500"
-                required
-              />
-            </div>
+          <div className="col-span-2">
+            <label
+              htmlFor="tanggal_mulai"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Tanggal Mulai
+            </label>
+            <input
+              type="date"
+              id="tanggal_mulai"
+              name="tanggal_mulai"
+              value={formatDateForInput(formData.tanggal_mulai)}
+              onChange={handleChange}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500"
+              required
+            />
           </div>
-        </form>
-
-
+          <div className="col-span-2">
+            <label
+              htmlFor="tanggal_akhir"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Tanggal Selesai
+            </label>
+            <input
+              type="date"
+              id="tanggal_akhir"
+              name="tanggal_akhir"
+              value={formatDateForInput(formData.tanggal_akhir)}
+              onChange={handleChange}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500"
+              required
+            />
+          </div>
+          <div className="col-span-2">
+            <label
+              htmlFor="tahun_ajaran"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Tahun Ajaran
+            </label>
+            <input
+              type="text"
+              id="tahun_ajaran"
+              name="tahun_ajaran"
+              value={formData?.tahun_ajaran || ""}
+              onChange={handleChange}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500"
+              required
+            />
+          </div>
+          <div className="col-span-2">
+            <label
+              htmlFor="status_gelombang"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Status Gelombang
+            </label>
+            <select
+              id="status_gelombang"
+              name="status_gelombang"
+              value={formData?.status_gelombang || ""}
+              onChange={handleSelectChange}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500"
+              required
+            >
+              <option value="">Pilih Status Gelombang</option>
+              <option value="Aktif">Aktif</option>
+              <option value="Tidak Aktif">Tidak Aktif</option>
+            </select>
+          </div>
+          <div className="col-span-2">
+            <label
+              htmlFor="deskripsi"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Deskripsi
+            </label>
+            <textarea
+              id="deskripsi"
+              name="deskripsi"
+              value={formData?.deskripsi || ""}
+              onChange={handleChange}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500"
+              required
+            />
+          </div>
+        </div>
+      </form>
     </ModalContainer>
-  )
+  );
 };
 
 export default EditInformasiPendaftaran;

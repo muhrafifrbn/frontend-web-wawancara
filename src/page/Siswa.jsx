@@ -1,20 +1,20 @@
 /* eslint-disable no-unused-vars */
-import React, { useEffect, useState, useContext } from 'react'
-import Dashboard from '../template/Dashboard'
-import Tabel from '../template/Tabel'
-import { FaEye, FaFilePdf, FaTrash, FaFilePen  } from "react-icons/fa6";
-import { get,deleteData  } from "../utils/api";
-import { useLocation, useNavigate  } from 'react-router-dom';
-import Notification from '../components/Notification/Notif';
-import DetailSiswa from './ForumSiswa/DetailSiswa';
-import useTitle from '../utils/useTitle';
-import { AuthContext } from '../Context/AuthContext';
-import DeleteConfirmation from '../components/Notification/DeleteConfirmation';
-import { sortLatedData } from '../utils/sortLatedData';
-import EditSiswa from './ForumSiswa/EditSiswa';
+import React, { useEffect, useState, useContext } from "react";
+import Dashboard from "../template/Dashboard";
+import Tabel from "../template/Tabel";
+import { FaEye, FaFilePdf, FaTrash, FaFilePen } from "react-icons/fa6";
+import { get, deleteData } from "../utils/api";
+import { useLocation, useNavigate } from "react-router-dom";
+import Notification from "../components/Notification/Notif";
+import DetailSiswa from "./ForumSiswa/DetailSiswa";
+import useTitle from "../utils/useTitle";
+import { AuthContext } from "../Context/AuthContext";
+import DeleteConfirmation from "../components/Notification/DeleteConfirmation";
+import { sortLatedData } from "../utils/sortLatedData";
+import EditSiswa from "./ForumSiswa/EditSiswa";
 
 const Siswa = () => {
-  useTitle('Data Siswa - Dashboard');
+  useTitle("Data Siswa - Dashboard");
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -29,7 +29,7 @@ const Siswa = () => {
   const { state } = useContext(AuthContext);
   const userRole = state?.role;
 
-  const isAdmin = userRole === 'admin';
+  const isAdmin = userRole === "admin";
 
   const handleOpenModal = (id) => {
     setSelectedId(id);
@@ -39,23 +39,23 @@ const Siswa = () => {
   const handleOpenEditModal = (id) => {
     setSelectedId(id);
     setShowEditModal(true);
-  }
+  };
 
   const handleDelete = DeleteConfirmation({
     onDelete: (id) => deleteData(`/students/delete/${id}`),
-    itemName: 'data siswa',
+    itemName: "data siswa",
     onSuccess: (id) => {
-      setData(data.filter(item => item.id !== id));
+      setData(data.filter((item) => item.id !== id));
     },
     onError: (error) => {
       console.error("Error deleting student:", error);
-    }
+    },
   });
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      setSuccessMsg('');
-      setErrorMsg('');
+      setSuccessMsg("");
+      setErrorMsg("");
     }, 2000);
     return () => clearTimeout(timer);
   }, [successMsg, errorMsg]);
@@ -69,18 +69,18 @@ const Siswa = () => {
     { judul: "Gender" },
     { judul: "Agama" },
     { judul: "Kebangsaan" },
-    { judul: 'Tanggal di tambahkan'},
-    { judul: 'Action'}
+    { judul: "Tanggal di tambahkan" },
+    { judul: "Action" },
   ];
 
   const fetchData = async () => {
     try {
-      const response = await get('/students');
+      const response = await get("/students");
       const sortedData = sortLatedData(response);
       setData(sortedData);
       setIsLoading(false);
     } catch (err) {
-      setErrorMsg('Gagal Mengambil Data');
+      setErrorMsg("Gagal Mengambil Data");
       setIsLoading(false);
     }
   };
@@ -91,43 +91,61 @@ const Siswa = () => {
 
     const refreshData = setInterval(() => {
       fetchData();
-    }, refreshInterval);  
+    }, refreshInterval);
 
     return () => clearInterval(refreshData);
   }, []);
 
   const renderSiswaRow = (item, index) => (
     <tr className="bg-white border-b" key={item.id || index}>
-      <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+      <th
+        scope="row"
+        className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap"
+      >
         {item.student_name}
       </th>
       <td className="px-6 py-4 text-gray-900">{item.student_email}</td>
       <td className="px-6 py-4 text-gray-900">{item.student_phone_number}</td>
       <td className="px-6 py-4 text-gray-900">{item.place_of_birth}</td>
-      <td className="px-6 py-4 text-gray-900">{new Date(item.date_of_birth).toLocaleDateString('id-ID')}</td>
+      <td className="px-6 py-4 text-gray-900">
+        {new Date(item.date_of_birth).toLocaleDateString("id-ID")}
+      </td>
       <td className="px-6 py-4 text-gray-900">{item.gender}</td>
       <td className="px-6 py-4 text-gray-900">{item.religion}</td>
       <td className="px-6 py-4 text-gray-900">{item.nationality}</td>
       <td className="px-6 py-4 text-gray-900">
-        {new Date(item.created_at).toLocaleDateString('id-ID')}
+        {new Date(item.created_at).toLocaleDateString("id-ID")}
       </td>
-      <td className='flex items-center justify-center py-6'>
-        <div className='flex items-center justify-between gap-x-5'>
-          <button onClick={() => handleOpenModal(item.id)} className="text-red-700 cursor-pointer hover:text-red-500">
+      <td className="flex items-center justify-center py-6">
+        <div className="flex items-center justify-between gap-x-5">
+          <button
+            onClick={() => handleOpenModal(item.id)}
+            className="text-red-700 cursor-pointer hover:text-red-500"
+          >
             <FaEye size={18} />
           </button>
           <button
-            onClick={() => navigate(`/hasilSiswa/${item.id}`, { state: { childName: item.student_name } })}
+            onClick={() =>
+              navigate(`/hasilSiswa/${item.id}`, {
+                state: { childName: item.student_name },
+              })
+            }
             className="text-red-700 cursor-pointer hover:text-red-500"
           >
             <FaFilePdf size={18} />
           </button>
-          {isAdmin && (  
+          {isAdmin && (
             <>
-              <button onClick={() => handleOpenEditModal(item.id) }className="text-red-700 cursor-pointer hover:text-red-500">
+              <button
+                onClick={() => handleOpenEditModal(item.id)}
+                className="text-red-700 cursor-pointer hover:text-red-500"
+              >
                 <FaFilePen size={18} />
               </button>
-              <button onClick={() => handleDelete(item.id)} className="text-red-700 cursor-pointer hover:text-red-500">
+              <button
+                onClick={() => handleDelete(item.id)}
+                className="text-red-700 cursor-pointer hover:text-red-500"
+              >
                 <FaTrash size={18} />
               </button>
             </>
@@ -138,14 +156,22 @@ const Siswa = () => {
   );
 
   return (
-    <Dashboard title={'Siswa'}>
+    <Dashboard title={"Siswa"}>
       <div className="flex flex-col justify-between w-full min-h-[700px] xl:min-h-[calc(100vh-130px)]">
         {successMsg && (
-          <Notification type="success" message={successMsg} onClose={() => setSuccessMsg('')} />
+          <Notification
+            type="success"
+            message={successMsg}
+            onClose={() => setSuccessMsg("")}
+          />
         )}
 
         {errorMsg && (
-          <Notification type="error" message={errorMsg} onClose={() => setErrorMsg('')} />
+          <Notification
+            type="error"
+            message={errorMsg}
+            onClose={() => setErrorMsg("")}
+          />
         )}
 
         <Tabel
@@ -165,10 +191,17 @@ const Siswa = () => {
           )}
         </Tabel>
 
-        {showModal && <DetailSiswa id={selectedId} onClose={() => setShowModal(false)} />}
-      
-        {showEditModal && <EditSiswa id={selectedId} onClose={() => setShowEditModal(false)} onUpdate={fetchData}/>}
-      
+        {showModal && (
+          <DetailSiswa id={selectedId} onClose={() => setShowModal(false)} />
+        )}
+
+        {showEditModal && (
+          <EditSiswa
+            id={selectedId}
+            onClose={() => setShowEditModal(false)}
+            onUpdate={fetchData}
+          />
+        )}
       </div>
     </Dashboard>
   );

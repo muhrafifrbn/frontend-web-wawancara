@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import Dashboard from "../template/Dashboard";
 import Tabel from "../template/Tabel";
-import { FaEye, FaTrash, FaFilePen, FaFilePdf } from "react-icons/fa6";
+import { FaEye, FaTrash, FaFilePen } from "react-icons/fa6";
 import { get, deleteData } from "../utils/api";
 import { useLocation, useNavigate } from "react-router-dom";
 import Notification from "../components/Notification/Notif";
@@ -49,7 +49,7 @@ const InformasiPendaftaran = () => {
   };
 
   const handleDelete = DeleteConfirmation({
-    onDelete: (id) => deleteData(`/information/registration/${id}`),
+    onDelete: (id) => deleteData(`/information/registration/delete/${id}`),
     itemName: "data informasi pendaftaran",
     onSuccess: (id) => {
       setData(data.filter((item) => item.user_id !== id));
@@ -117,16 +117,6 @@ const InformasiPendaftaran = () => {
             className="text-red-700 cursor-pointer hover:text-red-500"
           >
             <FaEye size={18} />
-          </button>
-          <button
-            onClick={() =>
-              navigate(`/hasilSiswa/${item.id}`, {
-                state: { childName: item.student_name },
-              })
-            }
-            className="text-red-700 cursor-pointer hover:text-red-500"
-          >
-            <FaFilePdf size={18} />
           </button>
           {isAdmin && (
             <>
