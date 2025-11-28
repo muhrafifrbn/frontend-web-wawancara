@@ -29,6 +29,10 @@ import { RegistratorRoute } from "./utils/middleware/ProtectedRoute";
 import DataLandingPage from "./page/Registrator/DataLandingPage";
 import InformasiPendaftaran from "./page/InformasiPendaftaran";
 import AddInformasiPendaftaran from "./page/InformasiPendaftaran/AddInformasiPendaftaran";
+import InformasiTes from "./page/InformasiTes";
+// import AddInformasiTes from "./page/InformasiTes/AddInformasiTes";
+
+
 
 const App = () => {
   return (
@@ -58,10 +62,16 @@ const App = () => {
               <Route path="/hasilMedical/:id" element={<HasilMedical />} />
               <Route path="/hasilOrtu" element={<HasilOrtu />} />
               <Route path="/user" element={<User />} />
-              <Route
-                path="/informasi-pendaftaran"
-                element={<InformasiPendaftaran />}/>
+
+              {/* router informasi pendaftaran */}
+              <Route path="/informasi-pendaftaran" element={<InformasiPendaftaran />}/>
                 <Route path="/add-informasi-pendaftaran" element={<AddInformasiPendaftaran />} />
+
+                {/* router informasi test */}
+                <Route path="/informasi-tes" element={<InformasiTes />}/>
+                {/* <Route path="/add-informasi-tes" element={<AddInformasiTes />} /> */}
+
+                {/* router add user */}
               <Route path="/add-user" element={<AddUser />} />
               <Route path="/logging" element={<Logging />} />
               <Route path="/hasilOrtu/:id" element={<HasilOrtu />} />
