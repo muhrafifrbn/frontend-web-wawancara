@@ -70,7 +70,7 @@ const LoginPage = () => {
         <div className="flex flex-col w-full md:w-1/2 lg:w-1/3 bg-white p-8 md:p-16 justify-center rounded-xl shadow-lg md:rounded-none md:shadow-none">
           <div className="mb-8 text-left">
             <h2 className="text-2xl font-bold text-red-900">
-              Sistem Manajemen Wawancara PPDB Letris Indonesia 2
+              Sistem Manajemen PPBD & Wawancara Letris Indonesia 2
             </h2>
             <p className="mt-2 text-gray-600">
               Silakan masukan username dan password anda
