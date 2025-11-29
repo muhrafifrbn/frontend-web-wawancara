@@ -14,7 +14,8 @@ const EditJadwalTes = ({ id, onClose, onUpdate }) => {
   useEffect(() => {
     const fetchDetail = async () => {
       try {
-        const response = await get(`/information/schedule-tes/${id}`);
+        const response = await get(`/information/schedule-test/${id}`);
+        console.log("Data gelombang:", response.data);
         console.log(response.data);
         setFormData(response.data);
       } catch (error) {
@@ -39,7 +40,7 @@ const EditJadwalTes = ({ id, onClose, onUpdate }) => {
         const response = await get("/information/registration");
 
         setGelombangOptions(response.data);
-        console.log("Data gelombang:", response.data);
+        // console.log("Data gelombang:", response.data);
       } catch (error) {
         console.error("Error fetching data:", error);
         setErrorGelombang("Gagal memuat data gelombang");
