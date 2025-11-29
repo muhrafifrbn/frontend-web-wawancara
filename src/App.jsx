@@ -75,10 +75,16 @@ const App = () => {
               <Route path="/informasi-tes" element={<InformasiTes />} />
               <Route path="/add-informasi-tes" element={<AddInformasiTes />} />
 
+              {/* router jadwal tes */}
+              <Route path="jadwal-tes" element={}
+
               {/* router add user */}
               <Route path="/add-user" element={<AddUser />} />
               <Route path="/logging" element={<Logging />} />
               <Route path="/hasilOrtu/:id" element={<HasilOrtu />} />
+
+              
+
             </Route>
 
             <Route element={<RegistratorRoute />}>
