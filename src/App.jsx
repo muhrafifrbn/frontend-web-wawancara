@@ -32,6 +32,7 @@ import AddInformasiPendaftaran from "./page/InformasiPendaftaran/AddInformasiPen
 import InformasiTes from "./page/InformasiTes";
 import AddInformasiTes from "./page/InformasiTes/AddInformasiTes";
 import JadwalTes from "./page/JadwalTes";
+import AddJadwalTes from "./page/JadwalTes/AddJadwalTes";
 
 const App = () => {
   return (
@@ -78,6 +79,7 @@ const App = () => {
 
               {/* router jadwal tes */}
               <Route path="jadwal-tes" element={<JadwalTes />} />
+              <Route path="add-jadwal-tes" element={<AddJadwalTes />} />
 
               {/* router add user */}
               <Route path="/add-user" element={<AddUser />} />
