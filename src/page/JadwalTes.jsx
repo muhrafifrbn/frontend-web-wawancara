@@ -48,7 +48,7 @@ const JadwalTes = () => {
   };
 
   const handleDelete = DeleteConfirmation({
-    onDelete: (id) => deleteData(`/schedule/test/delete/${id}`),
+    onDelete: (id) => deleteData(`/information/schedule-test/delete/${id}`),
     itemName: "data jadwal tes",
     onSuccess: (id) => {
       setData(data.filter((item) => item.id !== id));
