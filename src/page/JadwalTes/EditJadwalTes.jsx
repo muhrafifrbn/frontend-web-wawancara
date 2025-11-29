@@ -10,27 +10,59 @@ const EditJadwalTes = ({ id, onClose, onUpdate }) => {
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
 
-  // Fetch schedule data by id
+  const [gelombangOptions, setGelombangOptions] = useState([]);
+  const [loadingGelombang, setLoadingGelombang] = useState(true);
+  const [errorGelombang, setErrorGelombang] = useState("");
+
+  // 🔹 Ambil data jadwal by id
   useEffect(() => {
     const fetchDetail = async () => {
       try {
         const response = await get(`/information/schedule-test/${id}`);
-        console.log("Data gelombang:", response.data);
-        console.log(response.data);
-        setFormData(response.data);
+        console.log("Detail jadwal tes:", response.data);
+
+        //  PARSE informasi_ruangan dari STRING JSON → OBJECT
+        let infoRuanganDefault = {
+          tes_kesehatan: "",
+          wawancara: "",
+          psikotes: "",
+          tes_komputer: "",
+        };
+
+        if (response.data.informasi_ruangan) {
+          try {
+            const raw = response.data.informasi_ruangan;
+            const parsed =
+              typeof raw === "string" ? JSON.parse(raw) : raw;
+
+            infoRuanganDefault = {
+              ...infoRuanganDefault,
+              ...parsed,
+            };
+          } catch (err) {
+            console.error(
+              "Gagal parse informasi_ruangan di edit:",
+              err,
+              response.data.informasi_ruangan
+            );
+          }
+        }
+
+        setFormData({
+          ...response.data,
+          informasi_ruangan: infoRuanganDefault,
+        });
       } catch (error) {
         console.error("Gagal mengambil data:", error);
       } finally {
         setLoading(false);
       }
     };
+
     fetchDetail();
   }, [id]);
 
-  const [gelombangOptions, setGelombangOptions] = useState([]);
-  const [loadingGelombang, setLoadingGelombang] = useState(true);
-  const [errorGelombang, setErrorGelombang] = useState("");
-
+  // 🔹 Ambil list gelombang
   useEffect(() => {
     const fetchGelombang = async () => {
       try {
@@ -38,9 +70,7 @@ const EditJadwalTes = ({ id, onClose, onUpdate }) => {
         setErrorGelombang("");
 
         const response = await get("/information/registration");
-
         setGelombangOptions(response.data);
-        // console.log("Data gelombang:", response.data);
       } catch (error) {
         console.error("Error fetching data:", error);
         setErrorGelombang("Gagal memuat data gelombang");
@@ -49,42 +79,61 @@ const EditJadwalTes = ({ id, onClose, onUpdate }) => {
       }
     };
 
-    // pertama kali komponen kebuka -> fetching
     fetchGelombang();
 
-    // setiap kali window/tab ini balik fokus -> fetch lagi
     const handleFocus = () => {
       fetchGelombang();
     };
 
     window.addEventListener("focus", handleFocus);
-
-    // bersihin event listener pas komponen ga dipake lagi (unmount)
     return () => {
       window.removeEventListener("focus", handleFocus);
     };
   }, []);
 
-  // Handle input changes
+  // 🔹 Handle input changes (termasuk nested informasi_ruangan.xxx)
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+
+    // nested: informasi_ruangan.tes_kesehatan, dll
+    if (name.startsWith("informasi_ruangan.")) {
+      const key = name.split(".")[1];
+      setFormData((prev) => ({
+        ...prev,
+        informasi_ruangan: {
+          ...prev.informasi_ruangan,
+          [key]: value,
+        },
+      }));
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
   };
 
-  // Handle form submission
+  // 🔹 Submit update
   const handleSubmit = async (e) => {
     if (e) e.preventDefault();
     setSaving(true);
-    // console.log(err);
+
     try {
-      const dataToSubmit = { ...formData };
-      console.log(dataToSubmit);
+      if (!formData) return;
+
+      // CONVERT informasi_ruangan OBJECT → STRING JSON sebelum kirim ke BE
+      const dataToSubmit = {
+        ...formData,
+        informasi_ruangan: JSON.stringify(formData.informasi_ruangan),
+      };
+
+      console.log("Data dikirim (update):", dataToSubmit);
 
       await put(`/information/schedule-test/update/${id}`, dataToSubmit);
-      onUpdate(); // Refresh parent data
+      onUpdate();
       setMessage("Data berhasil diupdate");
       setTimeout(() => {
-        onClose(); // Close modal
+        onClose();
       }, 1000);
     } catch (error) {
       console.error("Gagal menyimpan data:", error);
@@ -112,7 +161,7 @@ const EditJadwalTes = ({ id, onClose, onUpdate }) => {
     </button>
   );
 
-  if (loading) return <LoadingSpinner />;
+  if (loading || !formData) return <LoadingSpinner />;
 
   return (
     <ModalContainer
@@ -186,21 +235,82 @@ const EditJadwalTes = ({ id, onClose, onUpdate }) => {
             />
           </div>
 
-          {/* Informasi Ruangan */}
+          {/* Informasi Ruangan Tes Kesehatan */}
           <div className="col-span-2">
             <label
-              htmlFor="informasi_ruangan"
+              htmlFor="informasi_ruangan.tes_kesehatan"
               className="block text-sm font-medium text-gray-700"
             >
-              Informasi Ruangan
+              Informasi Ruangan Tes Kesehatan
             </label>
             <input
               type="text"
-              id="informasi_ruangan"
-              name="informasi_ruangan"
-              value={formData?.informasi_ruangan || ""}
+              id="informasi_ruangan.tes_kesehatan"
+              name="informasi_ruangan.tes_kesehatan"
+              value={formData.informasi_ruangan.tes_kesehatan || ""}
               onChange={handleChange}
               className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500"
+              placeholder="Contoh: Ruang 101, Lantai 2"
+              required
+            />
+          </div>
+
+          {/* Informasi Ruangan Wawancara */}
+          <div className="col-span-2">
+            <label
+              htmlFor="informasi_ruangan.wawancara"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Informasi Ruangan Wawancara
+            </label>
+            <input
+              type="text"
+              id="informasi_ruangan.wawancara"
+              name="informasi_ruangan.wawancara"
+              value={formData.informasi_ruangan.wawancara || ""}
+              onChange={handleChange}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500"
+              placeholder="Contoh: Ruang 201, Lantai 3"
+              required
+            />
+          </div>
+
+          {/* Informasi Ruangan Psikotes */}
+          <div className="col-span-2">
+            <label
+              htmlFor="informasi_ruangan.psikotes"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Informasi Ruangan Psikotes
+            </label>
+            <input
+              type="text"
+              id="informasi_ruangan.psikotes"
+              name="informasi_ruangan.psikotes"
+              value={formData.informasi_ruangan.psikotes || ""}
+              onChange={handleChange}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500"
+              placeholder="Contoh: Ruang 301, Lantai 4"
+              required
+            />
+          </div>
+
+          {/* Informasi Ruangan Tes Komputer (TIK) */}
+          <div className="col-span-2">
+            <label
+              htmlFor="informasi_ruangan.tes_komputer"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Informasi Ruangan Tes Komputer (TIK)
+            </label>
+            <input
+              type="text"
+              id="informasi_ruangan.tes_komputer"
+              name="informasi_ruangan.tes_komputer"
+              value={formData.informasi_ruangan.tes_komputer || ""}
+              onChange={handleChange}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500"
+              placeholder="Contoh: Lab Komputer, Lantai 2"
               required
             />
           </div>
@@ -213,18 +323,21 @@ const EditJadwalTes = ({ id, onClose, onUpdate }) => {
             >
               ID Gelombang
             </label>
+            {errorGelombang && (
+              <p className="mb-1 text-xs text-red-600">{errorGelombang}</p>
+            )}
             <select
               id="id_gelombang"
               name="id_gelombang"
-              value={formData?.id_gelombang || ""}
+              value={formData.id_gelombang || ""}
               onChange={handleChange}
               className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500"
               required
+              disabled={loadingGelombang}
             >
               <option value="" disabled>
-                Pilih Gelombang
+                {loadingGelombang ? "Memuat data gelombang..." : "Pilih Gelombang"}
               </option>
-              {/* Populate options from gelombangOptions */}
               {gelombangOptions.map((g) => (
                 <option key={g.id} value={g.id}>
                   {g.nama_gelombang}

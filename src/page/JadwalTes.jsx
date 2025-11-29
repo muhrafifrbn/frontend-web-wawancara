@@ -6,7 +6,6 @@ import { get, deleteData } from "../utils/api";
 import { useLocation, useNavigate } from "react-router-dom";
 import Notification from "../components/Notification/Notif";
 import useTitle from "../utils/useTitle";
-import { sortLatedData } from "../utils/sortLatedData";
 import { AuthContext } from "../Context/AuthContext";
 import DeleteConfirmation from "../components/Notification/DeleteConfirmation";
 import DetailJadwalTes from "./JadwalTes/DetailJadwalTes";
@@ -26,7 +25,6 @@ const JadwalTes = () => {
 
   const { state } = useContext(AuthContext);
   const userRole = state?.role;
-
   const isAdmin = userRole === "admin";
 
   useEffect(() => {
@@ -51,7 +49,7 @@ const JadwalTes = () => {
     onDelete: (id) => deleteData(`/information/schedule-test/delete/${id}`),
     itemName: "data jadwal tes",
     onSuccess: (id) => {
-      setData(data.filter((item) => item.id !== id));
+      setData((prev) => prev.filter((item) => item.id !== id));
       setSuccessMsg("Data jadwal tes berhasil dihapus");
     },
     onError: (error) => {
@@ -92,43 +90,95 @@ const JadwalTes = () => {
     return () => clearInterval(refreshData);
   }, []);
 
-  const renderJadwalTesRow = (item, index) => (
-    <tr className="bg-white border-b" key={item.id || index}>
-      <td className="px-6 py-4 text-gray-900">{item.nama_gelombang}</td>
-      <td className="px-6 py-4 text-gray-900">
-        {new Date(item.tanggal_tes).toLocaleDateString("id-ID")}
-      </td>
-      <td className="px-6 py-4 text-gray-900">{item.jam_mulai}</td>
-      <td className="px-6 py-4 text-gray-900">{item.jam_selesai}</td>
-      <td className="px-6 py-4 text-gray-900">{item.informasi_ruangan}</td>
-      <td className="flex items-center justify-center py-6">
-        <div className="flex items-center justify-between gap-x-5">
-          <button
-            onClick={() => handleOpenModal(item.id)}
-            className="text-red-700 cursor-pointer hover:text-red-500"
-          >
-            <FaEye size={18} />
-          </button>
-          {isAdmin && (
-            <>
-              <button
-                onClick={() => handleOpenEditModal(item.id)}
-                className="text-red-700 cursor-pointer hover:text-red-500"
-              >
-                <FaFilePen size={18} />
-              </button>
-              <button
-                onClick={() => handleDelete(item.id)}
-                className="text-red-700 cursor-pointer hover:text-red-500"
-              >
-                <FaTrash size={18} />
-              </button>
-            </>
-          )}
-        </div>
-      </td>
-    </tr>
-  );
+  const renderJadwalTesRow = (item, index) => {
+    // PARSE INFORMASI_RUANGAN DARI STRING JSON → OBJECT
+    let infoRuangan = {};
+    if (item.informasi_ruangan) {
+      try {
+        if (typeof item.informasi_ruangan === "string") {
+          infoRuangan = JSON.parse(item.informasi_ruangan);
+        } else {
+          // kalau backend sudah ngasih object, langsung pakai
+          infoRuangan = item.informasi_ruangan;
+        }
+      } catch (e) {
+        console.error("Gagal parse informasi_ruangan:", e, item.informasi_ruangan);
+        infoRuangan = {};
+      }
+    }
+
+    return (
+      <tr className="bg-white border-b" key={item.id || index}>
+        {/* 1. Tanggal Tes */}
+        <td className="px-6 py-4 text-gray-900">
+          {item.tanggal_tes
+            ? new Date(item.tanggal_tes).toLocaleDateString("id-ID")
+            : "-"}
+        </td>
+
+        {/* 2. Jam Mulai */}
+        <td className="px-6 py-4 text-gray-900">{item.jam_mulai || "-"}</td>
+
+        {/* 3. Jam Selesai */}
+        <td className="px-6 py-4 text-gray-900">{item.jam_selesai || "-"}</td>
+
+        {/* 4. Informasi Ruangan */}
+        <td className="px-6 py-4 text-gray-900">
+          <div className="flex flex-col gap-1 text-sm">
+            <span>
+              <span className="font-semibold">Tes Kesehatan: </span>
+              {infoRuangan.tes_kesehatan || "-"}
+            </span>
+            <span>
+              <span className="font-semibold">Wawancara: </span>
+              {infoRuangan.wawancara || "-"}
+            </span>
+            <span>
+              <span className="font-semibold">Psikotes: </span>
+              {infoRuangan.psikotes || "-"}
+            </span>
+            <span>
+              <span className="font-semibold">Tes Komputer (TIK): </span>
+              {infoRuangan.tes_komputer || "-"}
+            </span>
+          </div>
+        </td>
+
+        {/* 5. Nama Gelombang */}
+        <td className="px-6 py-4 text-gray-900">
+          {item.nama_gelombang || "-"}
+        </td>
+
+        {/* 6. Aksi */}
+        <td className="flex items-center justify-center py-6">
+          <div className="flex items-center justify-between gap-x-5">
+            <button
+              onClick={() => handleOpenModal(item.id)}
+              className="text-red-700 cursor-pointer hover:text-red-500"
+            >
+              <FaEye size={18} />
+            </button>
+            {isAdmin && (
+              <>
+                <button
+                  onClick={() => handleOpenEditModal(item.id)}
+                  className="text-red-700 cursor-pointer hover:text-red-500"
+                >
+                  <FaFilePen size={18} />
+                </button>
+                <button
+                  onClick={() => handleDelete(item.id)}
+                  className="text-red-700 cursor-pointer hover:text-red-500"
+                >
+                  <FaTrash size={18} />
+                </button>
+              </>
+            )}
+          </div>
+        </td>
+      </tr>
+    );
+  };
 
   return (
     <Dashboard title="Jadwal Tes">

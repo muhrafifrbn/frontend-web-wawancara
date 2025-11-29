@@ -11,7 +11,12 @@ const AddJadwalTes = () => {
     tanggal_tes: "",
     jam_mulai: "",
     jam_selesai: "",
-    informasi_ruangan: "",
+    informasi_ruangan: {
+      tes_kesehatan: "",
+      wawancara: "",
+      psikotes: "",
+      tes_komputer: "",
+    },
     id_gelombang: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -57,12 +62,22 @@ const AddJadwalTes = () => {
   }, []);
 
   const handleChange = (e) => {
-    const value =
-      e.target.type === "checkbox" ? e.target.checked : e.target.value;
-    setFormData({
-      ...formData,
-      [e.target.name]: value,
-    });
+    const { name, value } = e.target;
+    if (name.startsWith("informasi_ruangan.")) {
+      const key = name.split(".")[1];
+      setFormData((prev) => ({
+        ...prev,
+        informasi_ruangan: {
+          ...prev.informasi_ruangan,
+          [key]: value,
+        },
+      }));
+    } else {
+      setFormData({
+        ...formData,
+        [name]: value,
+      });
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -71,21 +86,19 @@ const AddJadwalTes = () => {
     setError("");
     console.log(formData);
 
-    // Validasi
-    if (new Date(formData.tanggal_mulai) >= new Date(formData.tanggal_akhir)) {
-      setError("Tanggal selesai harus setelah tanggal mulai");
-      setIsSubmitting(false);
-      return;
-    }
-
     try {
-      await post("/information/schedule-test/create", {
+      //  DI SINI CONVERT OBJECT -> STRING JSON
+      const payload = {
         tanggal_tes: formData.tanggal_tes,
         jam_mulai: formData.jam_mulai,
         jam_selesai: formData.jam_selesai,
-        informasi_ruangan: formData.informasi_ruangan,
+        informasi_ruangan: JSON.stringify(formData.informasi_ruangan),
+        
+        // ini tambahan: kirim ke BE jadi string JSON
         id_gelombang: formData.id_gelombang,
-      });
+      };
+
+      await post("/information/schedule-test/create", payload);
 
       navigate("/jadwal-tes", {
         state: { successMsg: "Informasi jadwal berhasil ditambahkan" },
@@ -178,22 +191,82 @@ const AddJadwalTes = () => {
                 />
               </div>
 
-              {/* Informasi Ruangan */}
+              {/* Informasi Ruangan Tes Kesehatan */}
               <div className="mb-4 md:col-span-2">
                 <label
-                  htmlFor="informasi_ruangan"
+                  htmlFor="informasi_ruangan.tes_kesehatan"
                   className="block mb-2 font-medium text-md"
                 >
-                  Informasi Ruangan
+                  Informasi Ruangan Tes Kesehatan
                 </label>
                 <input
                   type="text"
-                  id="informasi_ruangan"
-                  name="informasi_ruangan"
-                  value={formData.informasi_ruangan}
+                  id="informasi_ruangan.tes_kesehatan"
+                  name="informasi_ruangan.tes_kesehatan"
+                  value={formData.informasi_ruangan.tes_kesehatan}
                   onChange={handleChange}
                   className="shadow-sm bg-white border-[2px] border-gray-300 outline-none text-sm rounded-md focus:ring-red-500 focus:border-red-500 block w-full p-2.5 h-12"
                   placeholder="Contoh: Ruang 101, Lantai 2"
+                  required
+                />
+              </div>
+
+              {/* Informasi Ruangan Wawancara */}
+              <div className="mb-4 md:col-span-2">
+                <label
+                  htmlFor="informasi_ruangan.wawancara"
+                  className="block mb-2 font-medium text-md"
+                >
+                  Informasi Ruangan Wawancara
+                </label>
+                <input
+                  type="text"
+                  id="informasi_ruangan.wawancara"
+                  name="informasi_ruangan.wawancara"
+                  value={formData.informasi_ruangan.wawancara}
+                  onChange={handleChange}
+                  className="shadow-sm bg-white border-[2px] border-gray-300 outline-none text-sm rounded-md focus:ring-red-500 focus:border-red-500 block w-full p-2.5 h-12"
+                  placeholder="Contoh: Ruang 201, Lantai 3"
+                  required
+                />
+              </div>
+
+              {/* Informasi Ruangan Psikotes */}
+              <div className="mb-4 md:col-span-2">
+                <label
+                  htmlFor="informasi_ruangan.psikotes"
+                  className="block mb-2 font-medium text-md"
+                >
+                  Informasi Ruangan Psikotes
+                </label>
+                <input
+                  type="text"
+                  id="informasi_ruangan.psikotes"
+                  name="informasi_ruangan.psikotes"
+                  value={formData.informasi_ruangan.psikotes}
+                  onChange={handleChange}
+                  className="shadow-sm bg-white border-[2px] border-gray-300 outline-none text-sm rounded-md focus:ring-red-500 focus:border-red-500 block w-full p-2.5 h-12"
+                  placeholder="Contoh: Ruang 301, Lantai 4"
+                  required
+                />
+              </div>
+
+              {/* Informasi Ruangan Tes Komputer (TIK) */}
+              <div className="mb-4 md:col-span-2">
+                <label
+                  htmlFor="informasi_ruangan.tes_komputer"
+                  className="block mb-2 font-medium text-md"
+                >
+                  Informasi Ruangan Tes Komputer (TIK)
+                </label>
+                <input
+                  type="text"
+                  id="informasi_ruangan.tes_komputer"
+                  name="informasi_ruangan.tes_komputer"
+                  value={formData.informasi_ruangan.tes_komputer}
+                  onChange={handleChange}
+                  className="shadow-sm bg-white border-[2px] border-gray-300 outline-none text-sm rounded-md focus:ring-red-500 focus:border-red-500 block w-full p-2.5 h-12"
+                  placeholder="Contoh: Lab Komputer, Lantai 2"
                   required
                 />
               </div>
