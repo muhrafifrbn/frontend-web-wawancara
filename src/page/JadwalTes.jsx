@@ -71,7 +71,7 @@ const JadwalTes = () => {
 
   const fetchData = async () => {
     try {
-      const response = await get("/schedule/test");
+      const response = await get("/information/schedule-test");
       setData(response.data);
       setIsLoading(false);
     } catch (err) {
