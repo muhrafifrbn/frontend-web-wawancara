@@ -4,7 +4,6 @@ import ModalContainer from "../../components/DetailModal/ModalContainer";
 import LoadingSpinner from "../../components/DetailModal/LoadingSpinner";
 import formatDateForInput from "../../utils/formatDateForInput";
 
-
 const EditJadwalTes = ({ id, onClose, onUpdate }) => {
   const [formData, setFormData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -27,10 +26,9 @@ const EditJadwalTes = ({ id, onClose, onUpdate }) => {
     fetchDetail();
   }, [id]);
 
-
-        const [gelombangOptions, setGelombangOptions] = useState([]);
-        const [loadingGelombang, setLoadingGelombang] = useState(true);
-    const [errorGelombang, setErrorGelombang] = useState("");
+  const [gelombangOptions, setGelombangOptions] = useState([]);
+  const [loadingGelombang, setLoadingGelombang] = useState(true);
+  const [errorGelombang, setErrorGelombang] = useState("");
 
   useEffect(() => {
     const fetchGelombang = async () => {
@@ -76,10 +74,10 @@ const EditJadwalTes = ({ id, onClose, onUpdate }) => {
   const handleSubmit = async (e) => {
     if (e) e.preventDefault();
     setSaving(true);
-    console.log(err);
+    // console.log(err);
     try {
-      const { tanggal_tes, jam_mulai, jam_selesai, informasi_ruangan, id_gelombang } = formData || {};
       const dataToSubmit = { ...formData };
+      console.log(dataToSubmit);
 
       await put(`/information/schedule-test/update/${id}`, dataToSubmit);
       onUpdate(); // Refresh parent data
@@ -138,7 +136,11 @@ const EditJadwalTes = ({ id, onClose, onUpdate }) => {
               type="date"
               id="tanggal_tes"
               name="tanggal_tes"
-              value={formData?.tanggal_tes ? formatDateForInput(formData.tanggal_tes) : ""}
+              value={
+                formData?.tanggal_tes
+                  ? formatDateForInput(formData.tanggal_tes)
+                  : ""
+              }
               onChange={handleChange}
               className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500"
               required
@@ -218,10 +220,12 @@ const EditJadwalTes = ({ id, onClose, onUpdate }) => {
               className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500"
               required
             >
-              <option value="" disabled>Pilih Gelombang</option>
+              <option value="" disabled>
+                Pilih Gelombang
+              </option>
               {/* Populate options from gelombangOptions */}
               {gelombangOptions.map((g) => (
-                <option key={g.id_gelombang} value={g.id_gelombang}>
+                <option key={g.id} value={g.id}>
                   {g.nama_gelombang}
                 </option>
               ))}
