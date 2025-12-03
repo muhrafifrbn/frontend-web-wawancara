@@ -65,7 +65,6 @@ const InformasiPendaftaran = () => {
     { judul: "Tanggal Mulai" },
     { judul: "Tanggal Selesai" },
     { judul: "Tahun Ajaran" },
-    { judul: "Kuota Pendaftar" },
     { judul: "Status Gelombang" },
     { judul: "Deskripsi" },
     { judul: "Aksi" },
@@ -105,7 +104,6 @@ const InformasiPendaftaran = () => {
         {new Date(item.tanggal_akhir).toLocaleDateString("id-ID")}
       </td>
       <td className="px-6 py-4 text-gray-900">{item.tahun_ajaran}</td>
-      <td className="px-6 py-4 text-gray-900">{item.kouta}</td>
       <td className="px-6 py-4 text-gray-900">{item.status_gelombang}</td>
       <td className="px-6 py-4 text-gray-900">{item.deskripsi}</td>
       {/* <td className="px-6 py-4 text-gray-900"></td> */}

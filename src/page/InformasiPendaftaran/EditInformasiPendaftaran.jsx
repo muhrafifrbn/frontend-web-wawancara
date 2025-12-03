@@ -11,6 +11,7 @@ const EditInformasiPendaftaran = ({ id, onClose, onUpdate }) => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
     const fetchDetail = async () => {
@@ -40,10 +41,11 @@ const EditInformasiPendaftaran = ({ id, onClose, onUpdate }) => {
   const handleSubmit = async (e) => {
     if (e) e.preventDefault();
     setSaving(true);
+    setErrors({});
     try {
       // Create a copy of the form data
       const dataToSubmit = { ...formData };
-      console.log(dataToSubmit);
+      // console.log(dataToSubmit);
 
       // Format the start and end if it exists using the formatDateForInput function
       if (dataToSubmit.tanggal_mulai || dataToSubmit.tanggal_akhir) {
@@ -63,7 +65,18 @@ const EditInformasiPendaftaran = ({ id, onClose, onUpdate }) => {
       }, 1000);
     } catch (error) {
       console.error("Gagal menyimpan data:", error);
-      console.log(dataToSubmit);
+      if (error.response && error.response.data.errors) {
+        const serverErrors = error.response.data.errors;
+        const formattedErrors = {};
+        serverErrors.forEach((err) => {
+          formattedErrors[err.path] = err.msg;
+        });
+        setErrors(formattedErrors);
+        // console.log(formData);
+      } else {
+        setErrors({ general: "Gagal menyimpan data. Silakan coba lagi." });
+      }
+      // console.log(dataToSubmit);
     } finally {
       setSaving(false);
     }
@@ -127,6 +140,11 @@ const EditInformasiPendaftaran = ({ id, onClose, onUpdate }) => {
               <option value="Gelombang 2">Gelombang 2</option>
               <option value="Gelombang 3">Gelombang 3</option>
             </select>
+            {errors.nama_gelombang && (
+              <div className="mt-2 text-sm text-red-500">
+                {errors.nama_gelombang}
+              </div>
+            )}
           </div>
           <div className="col-span-2">
             <label
@@ -144,6 +162,11 @@ const EditInformasiPendaftaran = ({ id, onClose, onUpdate }) => {
               className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500"
               required
             />
+            {errors.tanggal_mulai && (
+              <div className="mt-2 text-sm text-red-500">
+                {errors.tanggal_mulai}
+              </div>
+            )}
           </div>
           <div className="col-span-2">
             <label
@@ -161,6 +184,11 @@ const EditInformasiPendaftaran = ({ id, onClose, onUpdate }) => {
               className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500"
               required
             />
+            {errors.tanggal_akhir && (
+              <div className="mt-2 text-sm text-red-500">
+                {errors.tanggal_akhir}
+              </div>
+            )}
           </div>
           <div className="col-span-2">
             <label
@@ -178,6 +206,11 @@ const EditInformasiPendaftaran = ({ id, onClose, onUpdate }) => {
               className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500"
               required
             />
+            {errors.tahun_ajaran && (
+              <div className="mt-2 text-sm text-red-500">
+                {errors.tahun_ajaran}
+              </div>
+            )}
           </div>
           <div className="col-span-2">
             <label
@@ -198,6 +231,11 @@ const EditInformasiPendaftaran = ({ id, onClose, onUpdate }) => {
               <option value="Aktif">Aktif</option>
               <option value="Tidak Aktif">Tidak Aktif</option>
             </select>
+            {errors.status_gelombang && (
+              <div className="mt-2 text-sm text-red-500">
+                {errors.status_gelombang}
+              </div>
+            )}
           </div>
           <div className="col-span-2">
             <label
@@ -214,6 +252,11 @@ const EditInformasiPendaftaran = ({ id, onClose, onUpdate }) => {
               className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500"
               required
             />
+            {errors.deskripsi && (
+              <div className="mt-2 text-sm text-red-500">
+                {errors.deskripsi}
+              </div>
+            )}
           </div>
         </div>
       </form>
