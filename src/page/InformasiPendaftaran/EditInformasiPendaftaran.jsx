@@ -71,6 +71,7 @@ const EditInformasiPendaftaran = ({ id, onClose, onUpdate }) => {
         serverErrors.forEach((err) => {
           formattedErrors[err.path] = err.msg;
         });
+        setMessage("Data gagal diupdate");
         setErrors(formattedErrors);
         // console.log(formData);
       } else {
@@ -132,7 +133,9 @@ const EditInformasiPendaftaran = ({ id, onClose, onUpdate }) => {
               name="nama_gelombang"
               value={formData?.nama_gelombang || ""}
               onChange={handleSelectChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500"
+              className={`w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500 ${
+                errors?.nama_gelombang ? "ring-red-500 border-red-500" : ""
+              }`}
               required
             >
               <option value="">Pilih Gelombang</option>
@@ -159,7 +162,9 @@ const EditInformasiPendaftaran = ({ id, onClose, onUpdate }) => {
               name="tanggal_mulai"
               value={formatDateForInput(formData.tanggal_mulai)}
               onChange={handleChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500"
+              className={`w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500 ${
+                errors?.tanggal_mulai ? "ring-red-500 border-red-500" : ""
+              }`}
               required
             />
             {errors.tanggal_mulai && (
@@ -181,7 +186,9 @@ const EditInformasiPendaftaran = ({ id, onClose, onUpdate }) => {
               name="tanggal_akhir"
               value={formatDateForInput(formData.tanggal_akhir)}
               onChange={handleChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500"
+              className={`w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500 ${
+                errors?.tanggal_akhir ? "ring-red-500 border-red-500" : ""
+              }`}
               required
             />
             {errors.tanggal_akhir && (
@@ -203,7 +210,9 @@ const EditInformasiPendaftaran = ({ id, onClose, onUpdate }) => {
               name="tahun_ajaran"
               value={formData?.tahun_ajaran || ""}
               onChange={handleChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500"
+              className={`w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500 ${
+                errors?.tahun_ajaran ? "ring-red-500 border-red-500" : ""
+              }`}
               required
             />
             {errors.tahun_ajaran && (
@@ -224,7 +233,9 @@ const EditInformasiPendaftaran = ({ id, onClose, onUpdate }) => {
               name="status_gelombang"
               value={formData?.status_gelombang || ""}
               onChange={handleSelectChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500"
+              className={`w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500 ${
+                errors?.status_gelombang ? "ring-red-500 border-red-500" : ""
+              }`}
               required
             >
               <option value="">Pilih Status Gelombang</option>
@@ -249,7 +260,9 @@ const EditInformasiPendaftaran = ({ id, onClose, onUpdate }) => {
               name="deskripsi"
               value={formData?.deskripsi || ""}
               onChange={handleChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500"
+              className={`w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500 ${
+                errors?.deskripsi ? "ring-red-500 border-red-500" : ""
+              }`}
               required
             />
             {errors.deskripsi && (

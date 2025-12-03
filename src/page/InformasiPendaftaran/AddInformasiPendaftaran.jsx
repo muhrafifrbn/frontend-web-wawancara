@@ -111,7 +111,11 @@ const AddInformasiPendaftaran = () => {
                   name="nama_gelombang"
                   value={formData.nama_gelombang}
                   onChange={handleChange}
-                  className="shadow-sm bg-white border-[2px] border-gray-300 outline-none text-sm rounded-md focus:ring-red-500 focus:border-red-500 block w-full p-2.5 h-12"
+                  className={`shadow-sm bg-white border-[2px] border-gray-300 outline-none text-sm rounded-md 
+                    ${
+                      error?.nama_gelombang ? "ring-red-500 border-red-500" : ""
+                    } 
+                  focus:ring-red-500 focus:border-red-500 block w-full p-2.5 `}
                   required
                 >
                   <option value="">Pilih Gelombang</option>
@@ -139,7 +143,9 @@ const AddInformasiPendaftaran = () => {
                   value={formData.deskripsi}
                   onChange={handleChange}
                   rows={4}
-                  className="shadow-sm bg-white border-[2px] border-gray-300 outline-none text-sm rounded-md focus:ring-red-500 focus:border-red-500 block w-full p-2.5"
+                  className={`shadow-sm bg-white border-[2px] border-gray-300 outline-none text-sm rounded-md 
+                    ${error?.deskripsi ? "ring-red-500 border-red-500" : ""} 
+                  focus:ring-red-500 focus:border-red-500 block w-full p-2.5 `}
                   placeholder="Masukkan deskripsi informasi"
                   required
                 />
@@ -163,7 +169,9 @@ const AddInformasiPendaftaran = () => {
                   name="tahun_ajaran"
                   value={formData.tahun_ajaran}
                   onChange={handleChange}
-                  className="shadow-sm bg-white border-[2px] border-gray-300 outline-none text-sm rounded-md focus:ring-red-500 focus:border-red-500 block w-full p-2.5 h-12"
+                  className={`shadow-sm bg-white border-[2px] border-gray-300 outline-none text-sm rounded-md 
+                    ${error?.tahun_ajaran ? "ring-red-500 border-red-500" : ""} 
+                  focus:ring-red-500 focus:border-red-500 block w-full p-2.5 `}
                   placeholder="Contoh: 2024/2025"
                   required
                 />
@@ -187,7 +195,11 @@ const AddInformasiPendaftaran = () => {
                   name="tanggal_mulai"
                   value={formData.tanggal_mulai}
                   onChange={handleChange}
-                  className="shadow-sm bg-white border-[2px] border-gray-300 outline-none text-sm rounded-md focus:ring-red-500 focus:border-red-500 block w-full p-2.5 h-12"
+                  className={`shadow-sm bg-white border-[2px] border-gray-300 outline-none text-sm rounded-md 
+                    ${
+                      error?.tanggal_mulai ? "ring-red-500 border-red-500" : ""
+                    } 
+                  focus:ring-red-500 focus:border-red-500 block w-full p-2.5 `}
                   required
                 />
                 {error.tanggal_mulai && (
@@ -210,7 +222,11 @@ const AddInformasiPendaftaran = () => {
                   name="tanggal_akhir"
                   value={formData.tanggal_akhir}
                   onChange={handleChange}
-                  className="shadow-sm bg-white border-[2px] border-gray-300 outline-none text-sm rounded-md focus:ring-red-500 focus:border-red-500 block w-full p-2.5 h-12"
+                  className={`shadow-sm bg-white border-[2px] border-gray-300 outline-none text-sm rounded-md 
+                    ${
+                      error?.tanggal_akhir ? "ring-red-500 border-red-500" : ""
+                    } 
+                  focus:ring-red-500 focus:border-red-500 block w-full p-2.5 `}
                   required
                 />
                 {error.tanggal_akhir && (
