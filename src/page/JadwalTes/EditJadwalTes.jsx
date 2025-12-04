@@ -3,6 +3,7 @@ import { get, put } from "../../utils/api";
 import ModalContainer from "../../components/DetailModal/ModalContainer";
 import LoadingSpinner from "../../components/DetailModal/LoadingSpinner";
 import formatDateForInput from "../../utils/formatDateForInput";
+import formatTimeForInput from "../../utils/formatTimeForInput";
 
 const EditJadwalTes = ({ id, onClose, onUpdate }) => {
   const [formData, setFormData] = useState(null);
@@ -32,19 +33,14 @@ const EditJadwalTes = ({ id, onClose, onUpdate }) => {
         if (response.data.informasi_ruangan) {
           try {
             const raw = response.data.informasi_ruangan;
-            const parsed =
-              typeof raw === "string" ? JSON.parse(raw) : raw;
+            const parsed = typeof raw === "string" ? JSON.parse(raw) : raw;
 
             infoRuanganDefault = {
               ...infoRuanganDefault,
               ...parsed,
             };
           } catch (err) {
-            console.error(
-              "Gagal parse informasi_ruangan di edit:",
-              err,
-              response.data.informasi_ruangan
-            );
+            console.error("Gagal parse informasi_ruangan di edit:", err, response.data.informasi_ruangan);
           }
         }
 
@@ -127,6 +123,10 @@ const EditJadwalTes = ({ id, onClose, onUpdate }) => {
         informasi_ruangan: JSON.stringify(formData.informasi_ruangan),
       };
 
+      dataToSubmit.tanggal_tes = formatDateForInput(dataToSubmit.tanggal_tes);
+      dataToSubmit.jam_mulai = formatTimeForInput(dataToSubmit.jam_mulai);
+      dataToSubmit.jam_selesai = formatTimeForInput(dataToSubmit.jam_selesai);
+
       console.log("Data dikirim (update):", dataToSubmit);
 
       await put(`/information/schedule-test/update/${id}`, dataToSubmit);
@@ -143,20 +143,13 @@ const EditJadwalTes = ({ id, onClose, onUpdate }) => {
   };
 
   const primaryButton = (
-    <button
-      onClick={handleSubmit}
-      disabled={saving}
-      className="w-full px-5 py-2 text-sm font-semibold text-center text-white bg-red-500 rounded-md active:scale-95 focus:outline-none"
-    >
+    <button onClick={handleSubmit} disabled={saving} className="w-full px-5 py-2 text-sm font-semibold text-center text-white bg-red-500 rounded-md active:scale-95 focus:outline-none">
       {saving ? "Menyimpan..." : "Simpan"}
     </button>
   );
 
   const secondaryButton = (
-    <button
-      onClick={onClose}
-      className="w-full px-5 py-2 text-sm font-semibold text-center text-red-500 bg-white border-2 border-red-500 rounded-md active:scale-95 focus:outline-none"
-    >
+    <button onClick={onClose} className="w-full px-5 py-2 text-sm font-semibold text-center text-red-500 bg-white border-2 border-red-500 rounded-md active:scale-95 focus:outline-none">
       Batal
     </button>
   );
@@ -164,33 +157,19 @@ const EditJadwalTes = ({ id, onClose, onUpdate }) => {
   if (loading || !formData) return <LoadingSpinner />;
 
   return (
-    <ModalContainer
-      title="Edit Data Jadwal Tes"
-      subtitle="Edit informasi Jadwal Tes"
-      onClose={onClose}
-      primaryButton={primaryButton}
-      secondaryButton={secondaryButton}
-      msg={message}
-    >
+    <ModalContainer title="Edit Data Jadwal Tes" subtitle="Edit informasi Jadwal Tes" onClose={onClose} primaryButton={primaryButton} secondaryButton={secondaryButton} msg={message}>
       <form onSubmit={handleSubmit}>
         <div className="grid grid-cols-2 gap-4">
           {/* Tanggal Tes */}
           <div>
-            <label
-              htmlFor="tanggal_tes"
-              className="block text-sm font-medium text-gray-700"
-            >
+            <label htmlFor="tanggal_tes" className="block text-sm font-medium text-gray-700">
               Tanggal Tes
             </label>
             <input
               type="date"
               id="tanggal_tes"
               name="tanggal_tes"
-              value={
-                formData?.tanggal_tes
-                  ? formatDateForInput(formData.tanggal_tes)
-                  : ""
-              }
+              value={formData?.tanggal_tes ? formatDateForInput(formData.tanggal_tes) : ""}
               onChange={handleChange}
               className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500"
               required
@@ -199,10 +178,7 @@ const EditJadwalTes = ({ id, onClose, onUpdate }) => {
 
           {/* Jam Mulai */}
           <div>
-            <label
-              htmlFor="jam_mulai"
-              className="block text-sm font-medium text-gray-700"
-            >
+            <label htmlFor="jam_mulai" className="block text-sm font-medium text-gray-700">
               Jam Mulai
             </label>
             <input
@@ -218,10 +194,7 @@ const EditJadwalTes = ({ id, onClose, onUpdate }) => {
 
           {/* Jam Selesai */}
           <div>
-            <label
-              htmlFor="jam_selesai"
-              className="block text-sm font-medium text-gray-700"
-            >
+            <label htmlFor="jam_selesai" className="block text-sm font-medium text-gray-700">
               Jam Selesai
             </label>
             <input
@@ -237,10 +210,7 @@ const EditJadwalTes = ({ id, onClose, onUpdate }) => {
 
           {/* Informasi Ruangan Tes Kesehatan */}
           <div className="col-span-2">
-            <label
-              htmlFor="informasi_ruangan.tes_kesehatan"
-              className="block text-sm font-medium text-gray-700"
-            >
+            <label htmlFor="informasi_ruangan.tes_kesehatan" className="block text-sm font-medium text-gray-700">
               Informasi Ruangan Tes Kesehatan
             </label>
             <input
@@ -257,10 +227,7 @@ const EditJadwalTes = ({ id, onClose, onUpdate }) => {
 
           {/* Informasi Ruangan Wawancara */}
           <div className="col-span-2">
-            <label
-              htmlFor="informasi_ruangan.wawancara"
-              className="block text-sm font-medium text-gray-700"
-            >
+            <label htmlFor="informasi_ruangan.wawancara" className="block text-sm font-medium text-gray-700">
               Informasi Ruangan Wawancara
             </label>
             <input
@@ -277,10 +244,7 @@ const EditJadwalTes = ({ id, onClose, onUpdate }) => {
 
           {/* Informasi Ruangan Psikotes */}
           <div className="col-span-2">
-            <label
-              htmlFor="informasi_ruangan.psikotes"
-              className="block text-sm font-medium text-gray-700"
-            >
+            <label htmlFor="informasi_ruangan.psikotes" className="block text-sm font-medium text-gray-700">
               Informasi Ruangan Psikotes
             </label>
             <input
@@ -297,10 +261,7 @@ const EditJadwalTes = ({ id, onClose, onUpdate }) => {
 
           {/* Informasi Ruangan Tes Komputer (TIK) */}
           <div className="col-span-2">
-            <label
-              htmlFor="informasi_ruangan.tes_komputer"
-              className="block text-sm font-medium text-gray-700"
-            >
+            <label htmlFor="informasi_ruangan.tes_komputer" className="block text-sm font-medium text-gray-700">
               Informasi Ruangan Tes Komputer (TIK)
             </label>
             <input
@@ -317,15 +278,10 @@ const EditJadwalTes = ({ id, onClose, onUpdate }) => {
 
           {/* id_gelombang */}
           <div>
-            <label
-              htmlFor="id_gelombang"
-              className="block text-sm font-medium text-gray-700"
-            >
+            <label htmlFor="id_gelombang" className="block text-sm font-medium text-gray-700">
               ID Gelombang
             </label>
-            {errorGelombang && (
-              <p className="mb-1 text-xs text-red-600">{errorGelombang}</p>
-            )}
+            {errorGelombang && <p className="mb-1 text-xs text-red-600">{errorGelombang}</p>}
             <select
               id="id_gelombang"
               name="id_gelombang"
