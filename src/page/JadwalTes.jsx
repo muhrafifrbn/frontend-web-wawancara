@@ -101,8 +101,13 @@ const JadwalTes = () => {
           // kalau backend sudah ngasih object, langsung pakai
           infoRuangan = item.informasi_ruangan;
         }
+        console.log(typeof infoRuangan);
       } catch (e) {
-        console.error("Gagal parse informasi_ruangan:", e, item.informasi_ruangan);
+        console.error(
+          "Gagal parse informasi_ruangan:",
+          e,
+          item.informasi_ruangan
+        );
         infoRuangan = {};
       }
     }

@@ -20,7 +20,7 @@ const AddJadwalTes = () => {
     id_gelombang: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState({});
 
   //   Untuk gelombang
   const [gelombangOptions, setGelombangOptions] = useState([]);
@@ -83,7 +83,7 @@ const AddJadwalTes = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
-    setError("");
+    setError({});
     console.log(formData);
 
     try {
@@ -92,9 +92,9 @@ const AddJadwalTes = () => {
         tanggal_tes: formData.tanggal_tes,
         jam_mulai: formData.jam_mulai,
         jam_selesai: formData.jam_selesai,
-        informasi_ruangan: JSON.stringify(formData.informasi_ruangan),
-        
+
         // ini tambahan: kirim ke BE jadi string JSON
+        informasi_ruangan: JSON.stringify(formData.informasi_ruangan),
         id_gelombang: formData.id_gelombang,
       };
 
@@ -104,9 +104,20 @@ const AddJadwalTes = () => {
         state: { successMsg: "Informasi jadwal berhasil ditambahkan" },
       });
     } catch (err) {
-      setError(
-        "Gagal menambahkan informasi jadwal pendaftaran. Silakan coba lagi."
-      );
+      if (err.response && err.response.data.errors) {
+        const errorResponse = err.response.data.errors;
+        const formattedErrors = {};
+
+        errorResponse.forEach((error) => {
+          formattedErrors[error.path] = error.msg;
+        });
+        console.log(formattedErrors);
+        setError(formattedErrors);
+      } else {
+        setError({
+          general: "Gagal menambahkan jadwal tes. Silakan coba lagi.",
+        });
+      }
       console.log(formData);
       console.log(err);
       setIsSubmitting(false);
@@ -123,9 +134,9 @@ const AddJadwalTes = () => {
           </p>
         </div>
 
-        {error && (
+        {error.general && (
           <div className="p-3 mx-6 mt-4 text-red-700 bg-red-100 rounded-md">
-            {error}
+            {error.general}
           </div>
         )}
 
@@ -148,9 +159,16 @@ const AddJadwalTes = () => {
                   name="tanggal_tes"
                   value={formData.tanggal_tes}
                   onChange={handleChange}
-                  className="shadow-sm bg-white border-[2px] border-gray-300 outline-none text-sm rounded-md focus:ring-red-500 focus:border-red-500 block w-full p-2.5 h-12"
+                  className={`shadow-sm bg-white border-[2px] border-gray-300 outline-none text-sm rounded-md 
+                    ${error?.tanggal_tes ? "ring-red-500 border-red-500" : ""} 
+                  focus:ring-red-500 focus:border-red-500 block w-full p-2.5 `}
                   required
                 />
+                {error.tanggal_tes && (
+                  <div className="mt-2 text-sm text-red-500">
+                    {error.tanggal_tes}
+                  </div>
+                )}
               </div>
 
               {/* Jam Mulai */}
@@ -167,9 +185,16 @@ const AddJadwalTes = () => {
                   name="jam_mulai"
                   value={formData.jam_mulai}
                   onChange={handleChange}
-                  className="shadow-sm bg-white border-[2px] border-gray-300 outline-none text-sm rounded-md focus:ring-red-500 focus:border-red-500 block w-full p-2.5 h-12"
+                  className={`shadow-sm bg-white border-[2px] border-gray-300 outline-none text-sm rounded-md 
+                    ${error?.jam_mulai ? "ring-red-500 border-red-500" : ""} 
+                  focus:ring-red-500 focus:border-red-500 block w-full p-2.5 `}
                   required
                 />
+                {error.jam_mulai && (
+                  <div className="mt-2 text-sm text-red-500">
+                    {error.jam_mulai}
+                  </div>
+                )}
               </div>
 
               {/* Jam Selesai */}
@@ -186,9 +211,16 @@ const AddJadwalTes = () => {
                   name="jam_selesai"
                   value={formData.jam_selesai}
                   onChange={handleChange}
-                  className="shadow-sm bg-white border-[2px] border-gray-300 outline-none text-sm rounded-md focus:ring-red-500 focus:border-red-500 block w-full p-2.5 h-12"
+                  className={`shadow-sm bg-white border-[2px] border-gray-300 outline-none text-sm rounded-md 
+                    ${error?.jam_selesai ? "ring-red-500 border-red-500" : ""} 
+                  focus:ring-red-500 focus:border-red-500 block w-full p-2.5 `}
                   required
                 />
+                {error.jam_selesai && (
+                  <div className="mt-2 text-sm text-red-500">
+                    {error.jam_selesai}
+                  </div>
+                )}
               </div>
 
               {/* Informasi Ruangan Tes Kesehatan */}
@@ -205,10 +237,21 @@ const AddJadwalTes = () => {
                   name="informasi_ruangan.tes_kesehatan"
                   value={formData.informasi_ruangan.tes_kesehatan}
                   onChange={handleChange}
-                  className="shadow-sm bg-white border-[2px] border-gray-300 outline-none text-sm rounded-md focus:ring-red-500 focus:border-red-500 block w-full p-2.5 h-12"
+                  className={`shadow-sm bg-white border-[2px] border-gray-300 outline-none text-sm rounded-md 
+                    ${
+                      error?.informasi_ruangan
+                        ? "ring-red-500 border-red-500"
+                        : ""
+                    } 
+                  focus:ring-red-500 focus:border-red-500 block w-full p-2.5 `}
                   placeholder="Contoh: Ruang 101, Lantai 2"
                   required
                 />
+                {error.informasi_ruangan && (
+                  <div className="mt-2 text-sm text-red-500">
+                    {error.informasi_ruangan}
+                  </div>
+                )}
               </div>
 
               {/* Informasi Ruangan Wawancara */}
@@ -225,10 +268,21 @@ const AddJadwalTes = () => {
                   name="informasi_ruangan.wawancara"
                   value={formData.informasi_ruangan.wawancara}
                   onChange={handleChange}
-                  className="shadow-sm bg-white border-[2px] border-gray-300 outline-none text-sm rounded-md focus:ring-red-500 focus:border-red-500 block w-full p-2.5 h-12"
-                  placeholder="Contoh: Ruang 201, Lantai 3"
+                  className={`shadow-sm bg-white border-[2px] border-gray-300 outline-none text-sm rounded-md 
+                    ${
+                      error?.informasi_ruangan
+                        ? "ring-red-500 border-red-500"
+                        : ""
+                    } 
+                  focus:ring-red-500 focus:border-red-500 block w-full p-2.5 `}
+                  placeholder="Contoh: Ruang 101, Lantai 2"
                   required
                 />
+                {error.informasi_ruangan && (
+                  <div className="mt-2 text-sm text-red-500">
+                    {error.informasi_ruangan}
+                  </div>
+                )}
               </div>
 
               {/* Informasi Ruangan Psikotes */}
@@ -245,10 +299,21 @@ const AddJadwalTes = () => {
                   name="informasi_ruangan.psikotes"
                   value={formData.informasi_ruangan.psikotes}
                   onChange={handleChange}
-                  className="shadow-sm bg-white border-[2px] border-gray-300 outline-none text-sm rounded-md focus:ring-red-500 focus:border-red-500 block w-full p-2.5 h-12"
-                  placeholder="Contoh: Ruang 301, Lantai 4"
+                  className={`shadow-sm bg-white border-[2px] border-gray-300 outline-none text-sm rounded-md 
+                    ${
+                      error?.informasi_ruangan
+                        ? "ring-red-500 border-red-500"
+                        : ""
+                    } 
+                  focus:ring-red-500 focus:border-red-500 block w-full p-2.5 `}
+                  placeholder="Contoh: Ruang 101, Lantai 2"
                   required
                 />
+                {error.informasi_ruangan && (
+                  <div className="mt-2 text-sm text-red-500">
+                    {error.informasi_ruangan}
+                  </div>
+                )}
               </div>
 
               {/* Informasi Ruangan Tes Komputer (TIK) */}
@@ -265,10 +330,21 @@ const AddJadwalTes = () => {
                   name="informasi_ruangan.tes_komputer"
                   value={formData.informasi_ruangan.tes_komputer}
                   onChange={handleChange}
-                  className="shadow-sm bg-white border-[2px] border-gray-300 outline-none text-sm rounded-md focus:ring-red-500 focus:border-red-500 block w-full p-2.5 h-12"
-                  placeholder="Contoh: Lab Komputer, Lantai 2"
+                  className={`shadow-sm bg-white border-[2px] border-gray-300 outline-none text-sm rounded-md 
+                    ${
+                      error?.informasi_ruangan
+                        ? "ring-red-500 border-red-500"
+                        : ""
+                    } 
+                  focus:ring-red-500 focus:border-red-500 block w-full p-2.5 `}
+                  placeholder="Contoh: Ruang 101, Lantai 2"
                   required
                 />
+                {error.informasi_ruangan && (
+                  <div className="mt-2 text-sm text-red-500">
+                    {error.informasi_ruangan}
+                  </div>
+                )}
               </div>
 
               {/* Gelombang (id_gelombang) */}
@@ -289,7 +365,13 @@ const AddJadwalTes = () => {
                   name="id_gelombang"
                   value={formData.id_gelombang}
                   onChange={handleChange}
-                  className="shadow-sm bg-white border-[2px] border-gray-300 outline-none text-sm rounded-md focus:ring-red-500 focus:border-red-500 block w-full p-2.5 h-12"
+                  className={`shadow-sm bg-white border-[2px] border-gray-300 outline-none text-sm rounded-md 
+                    ${
+                      error?.informasi_ruangan
+                        ? "ring-red-500 border-red-500"
+                        : ""
+                    } 
+                  focus:ring-red-500 focus:border-red-500 block w-full p-2.5 `}
                   required
                   disabled={loadingGelombang}
                 >
@@ -305,6 +387,11 @@ const AddJadwalTes = () => {
                     </option>
                   ))}
                 </select>
+                {error.id_gelombang && (
+                  <div className="mt-2 text-sm text-red-500">
+                    {error.id_gelombang}
+                  </div>
+                )}
               </div>
             </div>
           </div>
