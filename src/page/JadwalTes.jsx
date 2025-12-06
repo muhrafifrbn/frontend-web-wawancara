@@ -101,7 +101,7 @@ const JadwalTes = () => {
           // kalau backend sudah ngasih object, langsung pakai
           infoRuangan = item.informasi_ruangan;
         }
-        console.log(typeof infoRuangan);
+        // console.log(infoRuangan);
       } catch (e) {
         console.error(
           "Gagal parse informasi_ruangan:",

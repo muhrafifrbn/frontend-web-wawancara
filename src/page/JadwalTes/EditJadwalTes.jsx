@@ -15,6 +15,7 @@ const EditJadwalTes = ({ id, onClose, onUpdate }) => {
   const [gelombangOptions, setGelombangOptions] = useState([]);
   const [loadingGelombang, setLoadingGelombang] = useState(true);
   const [errorGelombang, setErrorGelombang] = useState("");
+  const [selectedGelombang, setSelectedGelombang] = useState(null);
 
   // 🔹 Ambil data jadwal by id
   useEffect(() => {
@@ -92,6 +93,16 @@ const EditJadwalTes = ({ id, onClose, onUpdate }) => {
     };
   }, []);
 
+  useEffect(() => {
+    if (formData?.id_gelombang) {
+      const selected = gelombangOptions.find(
+        (gelombang) => gelombang.id === parseInt(formData.id_gelombang)
+      );
+      // console.log("tester");
+      setSelectedGelombang(selected); // Langsung set selectedGelombang
+    }
+  }, [formData?.id_gelombang, gelombangOptions]);
+
   // 🔹 Handle input changes (termasuk nested informasi_ruangan.xxx)
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -118,6 +129,62 @@ const EditJadwalTes = ({ id, onClose, onUpdate }) => {
   const handleSubmit = async (e) => {
     if (e) e.preventDefault();
     setSaving(true);
+
+    // Reset errors before submission
+    setErrors({});
+
+    if (selectedGelombang) {
+      const { tanggal_mulai, tanggal_akhir, nama_gelombang } =
+        selectedGelombang;
+      const tanggalTes = new Date(formData.tanggal_tes);
+
+      const mulai = new Date(tanggal_mulai);
+      const selesai = new Date(tanggal_akhir);
+
+      if (tanggalTes < mulai || tanggalTes > selesai) {
+        // console.log(mulai);
+        // console.log(selesai);
+        // new Date(tanggal_tes).toLocaleDateString("id-ID")
+        setErrors((prevError) => ({
+          ...prevError,
+          tanggal_tes: `Jadwal tes harus berada di antara ${mulai.toLocaleDateString(
+            "id-ID"
+          )} dan ${selesai.toLocaleDateString(
+            "id-ID"
+          )}. Pada periode ${nama_gelombang}`,
+        }));
+        setMessage("Data gagal diupdate");
+        setSaving(false);
+        return;
+      }
+    }
+
+    // Validasi informasi_ruangan (minimal 3 karakter)
+    const infoRuanganFields = [
+      "tes_kesehatan",
+      "wawancara",
+      "psikotes",
+      "tes_komputer",
+    ];
+    const newErrors = {};
+
+    infoRuanganFields.forEach((field) => {
+      if (
+        !formData.informasi_ruangan[field] ||
+        formData.informasi_ruangan[field].length < 3
+      ) {
+        newErrors[`informasi_ruangan.${field}`] =
+          "Harus diisi dengan minimal 3 karakter";
+      }
+    });
+
+    // Jika ada error, jangan lanjutkan ke proses submit
+    if (Object.keys(newErrors).length > 0) {
+      setMessage("Data gagal diupdate");
+      setErrors(newErrors);
+      setSaving(false);
+      return;
+    }
 
     try {
       if (!formData) return;
@@ -150,11 +217,9 @@ const EditJadwalTes = ({ id, onClose, onUpdate }) => {
         });
         setMessage("Data gagal diupdate");
         setErrors(formattedErrors);
-        // console.log(formData);
       } else {
         setErrors({ general: "Gagal menyimpan data. Silakan coba lagi." });
       }
-      // console.log(dataToSubmit);
     } finally {
       setSaving(false);
     }
@@ -193,7 +258,7 @@ const EditJadwalTes = ({ id, onClose, onUpdate }) => {
       <form onSubmit={handleSubmit}>
         <div className="grid grid-cols-2 gap-4">
           {/* Tanggal Tes */}
-          <div>
+          <div className="col-span-2">
             <label
               htmlFor="tanggal_tes"
               className="block text-sm font-medium text-gray-700"
@@ -288,10 +353,20 @@ const EditJadwalTes = ({ id, onClose, onUpdate }) => {
               name="informasi_ruangan.tes_kesehatan"
               value={formData.informasi_ruangan.tes_kesehatan || ""}
               onChange={handleChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500"
+              className={`w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500
+                    ${
+                      errors["informasi_ruangan.tes_kesehatan"]
+                        ? "ring-red-500 border-red-500"
+                        : ""
+                    }`}
               placeholder="Contoh: Ruang 101, Lantai 2"
               required
             />
+            {errors["informasi_ruangan.tes_kesehatan"] && (
+              <div className="mt-2 text-sm text-red-500">
+                {errors["informasi_ruangan.tes_kesehatan"]}
+              </div>
+            )}
           </div>
 
           {/* Informasi Ruangan Wawancara */}
@@ -308,19 +383,18 @@ const EditJadwalTes = ({ id, onClose, onUpdate }) => {
               name="informasi_ruangan.wawancara"
               value={formData.informasi_ruangan.wawancara || ""}
               onChange={handleChange}
-              className={`shadow-sm bg-white border-[2px] border-gray-300 outline-none text-sm rounded-md 
+              className={`w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500
                     ${
-                      errors?.informasi_ruangan
+                      errors["informasi_ruangan.wawancara"]
                         ? "ring-red-500 border-red-500"
                         : ""
-                    } 
-                  focus:ring-red-500 focus:border-red-500 block w-full p-2.5 `}
+                    }`}
               placeholder="Contoh: Ruang 101, Lantai 2"
               required
             />
-            {errors.informasi_ruangan && (
+            {errors["informasi_ruangan.wawancara"] && (
               <div className="mt-2 text-sm text-red-500">
-                {errors.informasi_ruangan}
+                {errors["informasi_ruangan.wawancara"]}
               </div>
             )}
           </div>
@@ -339,19 +413,18 @@ const EditJadwalTes = ({ id, onClose, onUpdate }) => {
               name="informasi_ruangan.psikotes"
               value={formData.informasi_ruangan.psikotes || ""}
               onChange={handleChange}
-              className={`shadow-sm bg-white border-[2px] border-gray-300 outline-none text-sm rounded-md 
+              className={`w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500
                     ${
-                      errors?.informasi_ruangan
+                      errors["informasi_ruangan.psikotes"]
                         ? "ring-red-500 border-red-500"
                         : ""
-                    } 
-                  focus:ring-red-500 focus:border-red-500 block w-full p-2.5 `}
+                    }`}
               placeholder="Contoh: Ruang 101, Lantai 2"
               required
             />
-            {errors.informasi_ruangan && (
+            {errors["informasi_ruangan.psikotes"] && (
               <div className="mt-2 text-sm text-red-500">
-                {errors.informasi_ruangan}
+                {errors["informasi_ruangan.psikotes"]}
               </div>
             )}
           </div>
@@ -370,24 +443,23 @@ const EditJadwalTes = ({ id, onClose, onUpdate }) => {
               name="informasi_ruangan.tes_komputer"
               value={formData.informasi_ruangan.tes_komputer || ""}
               onChange={handleChange}
-              className={`shadow-sm bg-white border-[2px] border-gray-300 outline-none text-sm rounded-md 
+              className={`w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500
                     ${
-                      errors?.informasi_ruangan
+                      errors["informasi_ruangan.tes_komputer"]
                         ? "ring-red-500 border-red-500"
                         : ""
-                    } 
-                  focus:ring-red-500 focus:border-red-500 block w-full p-2.5 `}
+                    }`}
               placeholder="Contoh: Ruang 101, Lantai 2"
               required
             />
-            {errors.informasi_ruangan && (
+            {errors["informasi_ruangan.tes_komputer"] && (
               <div className="mt-2 text-sm text-red-500">
-                {errors.informasi_ruangan}
+                {errors["informasi_ruangan.tes_komputer"]}
               </div>
             )}
           </div>
 
-          {/* id_gelombang */}
+          {/* ID Gelombang */}
           <div className="col-span-2">
             <label
               htmlFor="id_gelombang"

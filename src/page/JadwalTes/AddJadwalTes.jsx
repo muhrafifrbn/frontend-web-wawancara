@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { post, get } from "../../utils/api";
 import Dashboard from "../../template/Dashboard";
 import useTitle from "../../utils/useTitle";
+import formatDateForInput from "../../utils/formatDateForInput";
 
 const AddJadwalTes = () => {
   useTitle("Tambah Informasi Pendaftaran - Dashboard");
@@ -26,6 +27,7 @@ const AddJadwalTes = () => {
   const [gelombangOptions, setGelombangOptions] = useState([]);
   const [loadingGelombang, setLoadingGelombang] = useState(true);
   const [errorGelombang, setErrorGelombang] = useState("");
+  const [selectedGelombang, setSelectedGelombang] = useState(null);
 
   useEffect(() => {
     const fetchGelombang = async () => {
@@ -61,6 +63,18 @@ const AddJadwalTes = () => {
     };
   }, []);
 
+  useEffect(() => {
+    // Ambil data gelombang yang dipilih
+    if (formData.id_gelombang) {
+      const selected = gelombangOptions.find(
+        (gelombang) => gelombang.id === parseInt(formData.id_gelombang)
+      );
+      // console.log("Tipe formData.id_gelombang:");
+      // console.log("Tipe gelombang.id:", selected?.id);
+      setSelectedGelombang(selected);
+    }
+  }, [formData.id_gelombang, gelombangOptions]);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     if (name.startsWith("informasi_ruangan.")) {
@@ -83,8 +97,56 @@ const AddJadwalTes = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
-    setError({});
+    setError({}); // Reset errors before submission
     console.log(formData);
+
+    if (selectedGelombang) {
+      const { tanggal_mulai, tanggal_akhir } = selectedGelombang;
+      const tanggalTes = new Date(formData.tanggal_tes);
+
+      const mulai = new Date(tanggal_mulai);
+      const selesai = new Date(tanggal_akhir);
+
+      if (tanggalTes < mulai || tanggalTes > selesai) {
+        // console.log(mulai);
+        // console.log(selesai);
+        // new Date(tanggal_tes).toLocaleDateString("id-ID")
+        setError((prevError) => ({
+          ...prevError,
+          tanggal_tes: `Jadwal tes harus berada di antara ${mulai.toLocaleDateString(
+            "id-ID"
+          )} dan ${selesai.toLocaleDateString("id-ID")}.`,
+        }));
+        setIsSubmitting(false);
+        return;
+      }
+    }
+
+    // Validasi: Pastikan setiap informasi_ruangan memiliki minimal 3 karakter
+    const infoRuanganFields = [
+      "tes_kesehatan",
+      "wawancara",
+      "psikotes",
+      "tes_komputer",
+    ];
+    const newErrors = {};
+
+    infoRuanganFields.forEach((field) => {
+      if (
+        !formData.informasi_ruangan[field] ||
+        formData.informasi_ruangan[field].length < 3
+      ) {
+        newErrors[`informasi_ruangan.${field}`] =
+          "Harus diisi dengan minimal 3 karakter";
+      }
+    });
+
+    // Jika ada error, jangan lanjutkan ke proses submit
+    if (Object.keys(newErrors).length > 0) {
+      setError(newErrors);
+      setIsSubmitting(false);
+      return;
+    }
 
     try {
       //  DI SINI CONVERT OBJECT -> STRING JSON
@@ -92,9 +154,7 @@ const AddJadwalTes = () => {
         tanggal_tes: formData.tanggal_tes,
         jam_mulai: formData.jam_mulai,
         jam_selesai: formData.jam_selesai,
-
-        // ini tambahan: kirim ke BE jadi string JSON
-        informasi_ruangan: JSON.stringify(formData.informasi_ruangan),
+        informasi_ruangan: JSON.stringify(formData.informasi_ruangan), // Mengirim informasi ruangan sebagai string JSON
         id_gelombang: formData.id_gelombang,
       };
 
@@ -239,7 +299,7 @@ const AddJadwalTes = () => {
                   onChange={handleChange}
                   className={`shadow-sm bg-white border-[2px] border-gray-300 outline-none text-sm rounded-md 
                     ${
-                      error?.informasi_ruangan
+                      error?.informasi_ruangan?.tes_kesehatan
                         ? "ring-red-500 border-red-500"
                         : ""
                     } 
@@ -247,9 +307,9 @@ const AddJadwalTes = () => {
                   placeholder="Contoh: Ruang 101, Lantai 2"
                   required
                 />
-                {error.informasi_ruangan && (
+                {error["informasi_ruangan.tes_kesehatan"] && (
                   <div className="mt-2 text-sm text-red-500">
-                    {error.informasi_ruangan}
+                    {error["informasi_ruangan.tes_kesehatan"]}
                   </div>
                 )}
               </div>
@@ -270,7 +330,7 @@ const AddJadwalTes = () => {
                   onChange={handleChange}
                   className={`shadow-sm bg-white border-[2px] border-gray-300 outline-none text-sm rounded-md 
                     ${
-                      error?.informasi_ruangan
+                      error?.informasi_ruangan?.wawancara
                         ? "ring-red-500 border-red-500"
                         : ""
                     } 
@@ -278,9 +338,9 @@ const AddJadwalTes = () => {
                   placeholder="Contoh: Ruang 101, Lantai 2"
                   required
                 />
-                {error.informasi_ruangan && (
+                {error["informasi_ruangan.wawancara"] && (
                   <div className="mt-2 text-sm text-red-500">
-                    {error.informasi_ruangan}
+                    {error["informasi_ruangan.wawancara"]}
                   </div>
                 )}
               </div>
@@ -301,7 +361,7 @@ const AddJadwalTes = () => {
                   onChange={handleChange}
                   className={`shadow-sm bg-white border-[2px] border-gray-300 outline-none text-sm rounded-md 
                     ${
-                      error?.informasi_ruangan
+                      error?.informasi_ruangan?.psikotes
                         ? "ring-red-500 border-red-500"
                         : ""
                     } 
@@ -309,9 +369,9 @@ const AddJadwalTes = () => {
                   placeholder="Contoh: Ruang 101, Lantai 2"
                   required
                 />
-                {error.informasi_ruangan && (
+                {error["informasi_ruangan.psikotes"] && (
                   <div className="mt-2 text-sm text-red-500">
-                    {error.informasi_ruangan}
+                    {error["informasi_ruangan.psikotes"]}
                   </div>
                 )}
               </div>
@@ -332,7 +392,7 @@ const AddJadwalTes = () => {
                   onChange={handleChange}
                   className={`shadow-sm bg-white border-[2px] border-gray-300 outline-none text-sm rounded-md 
                     ${
-                      error?.informasi_ruangan
+                      error?.informasi_ruangan?.tes_komputer
                         ? "ring-red-500 border-red-500"
                         : ""
                     } 
@@ -340,9 +400,9 @@ const AddJadwalTes = () => {
                   placeholder="Contoh: Ruang 101, Lantai 2"
                   required
                 />
-                {error.informasi_ruangan && (
+                {error["informasi_ruangan.tes_komputer"] && (
                   <div className="mt-2 text-sm text-red-500">
-                    {error.informasi_ruangan}
+                    {error["informasi_ruangan.tes_komputer"]}
                   </div>
                 )}
               </div>
