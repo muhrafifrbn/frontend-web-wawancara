@@ -31,6 +31,8 @@ import InformasiPendaftaran from "./page/InformasiPendaftaran";
 import AddInformasiPendaftaran from "./page/InformasiPendaftaran/AddInformasiPendaftaran";
 import InformasiTes from "./page/InformasiTes";
 import AddInformasiTes from "./page/InformasiTes/AddInformasiTes";
+import JadwalTes from "./page/JadwalTes";
+import AddJadwalTes from "./page/JadwalTes/AddJadwalTes";
 
 const App = () => {
   return (
@@ -76,15 +78,13 @@ const App = () => {
               <Route path="/add-informasi-tes" element={<AddInformasiTes />} />
 
               {/* router jadwal tes */}
-              <Route path="jadwal-tes" element={}
+              <Route path="jadwal-tes" element={<JadwalTes />} />
+              <Route path="add-jadwal-tes" element={<AddJadwalTes />} />
 
               {/* router add user */}
               <Route path="/add-user" element={<AddUser />} />
               <Route path="/logging" element={<Logging />} />
               <Route path="/hasilOrtu/:id" element={<HasilOrtu />} />
-
-              
-
             </Route>
 
             <Route element={<RegistratorRoute />}>

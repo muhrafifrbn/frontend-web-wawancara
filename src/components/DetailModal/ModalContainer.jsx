@@ -18,11 +18,16 @@ const ModalContainer = ({
         <div className="sticky top-0 z-10 px-8 py-6 bg-white border-b rounded-t-xl">
           <h2 className="text-2xl font-bold text-gray-900">{title}</h2>
           {subtitle && <p className="mt-1 text-gray-500">{subtitle}</p>}
-          {msg && (
-            <div className="p-3 mt-2 mb-4 text-sm text-green-700 bg-green-100 border border-green-400 rounded ">
-              {msg}
-            </div>
-          )}
+          {msg &&
+            (msg.includes("berhasil") ? (
+              <div className="p-3 mt-2 mb-4 text-sm text-green-700 bg-green-100 border border-green-400 rounded ">
+                {msg}
+              </div>
+            ) : (
+              <div className="p-3 mt-2 mb-4 text-sm text-red-700 bg-red-100 border border-red-400 rounded">
+                {msg}
+              </div>
+            ))}
         </div>
 
         {/* Body */}

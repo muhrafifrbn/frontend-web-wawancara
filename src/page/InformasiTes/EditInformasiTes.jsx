@@ -11,6 +11,7 @@ const EditInformasiTes = ({ id, onClose, onUpdate }) => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
+  const [errors, setErrors] = useState({});
 
   // Jangan lupa untuk menggati endpointnya ya
   // Ini akan mengambil data informasi tes sesuai id
@@ -38,6 +39,7 @@ const EditInformasiTes = ({ id, onClose, onUpdate }) => {
   // untuk menghandle submit formnya
   const handleSubmit = async (e) => {
     if (e) e.preventDefault();
+    setErrors({});
     setSaving(true);
     try {
       // Create a copy of the form data
@@ -62,6 +64,21 @@ const EditInformasiTes = ({ id, onClose, onUpdate }) => {
       }, 1000);
     } catch (error) {
       console.error("Gagal menyimpan data:", error);
+      if (error.response && error.response.data.errors) {
+        const errorResponse = error.response.data.errors;
+        const formattedErrors = {};
+
+        errorResponse.forEach((error) => {
+          formattedErrors[error.path] = error.msg;
+        });
+        setMessage("Data gagal di update");
+        setErrors(formattedErrors);
+      } else {
+        setMessage("Data gagal di update");
+        setErrors({
+          general: "Gagal menambahkan Informasi Tes. Silahkan coba lagi!",
+        });
+      }
     } finally {
       setSaving(false);
     }
@@ -111,9 +128,14 @@ const EditInformasiTes = ({ id, onClose, onUpdate }) => {
               name="nama_tes"
               value={formData?.nama_tes || ""}
               onChange={handleChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500"
+              className={`shadow-sm bg-white border-[2px] border-gray-300 outline-none text-sm rounded-md 
+                    ${errors?.nama_tes ? "ring-red-500 border-red-500" : ""} 
+                  focus:ring-red-500 focus:border-red-500 block w-full p-2.5 `}
               required
             />
+            {errors.nama_tes && (
+              <div className="mt-2 text-sm text-red-500">{errors.nama_tes}</div>
+            )}
           </div>
 
           {/* Deskripsi Tes */}
@@ -129,9 +151,18 @@ const EditInformasiTes = ({ id, onClose, onUpdate }) => {
               name="deskripsi_tes"
               value={formData?.deskripsi_tes || ""}
               onChange={handleChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500"
+              className={`shadow-sm bg-white border-[2px] border-gray-300 outline-none text-sm rounded-md 
+                    ${
+                      errors?.deskripsi_tes ? "ring-red-500 border-red-500" : ""
+                    } 
+                  focus:ring-red-500 focus:border-red-500 block w-full p-2.5 `}
               required
             />
+            {errors.deskripsi_tes && (
+              <div className="mt-2 text-sm text-red-500">
+                {errors.deskripsi_tes}
+              </div>
+            )}
           </div>
         </div>
       </form>

@@ -13,10 +13,9 @@ const AddInformasiPendaftaran = () => {
     tanggal_mulai: "",
     tanggal_akhir: "",
     status_gelombang: true,
-    kouta: 100,
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState({});
 
   const handleChange = (e) => {
     const value =
@@ -30,15 +29,15 @@ const AddInformasiPendaftaran = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
-    setError("");
     console.log(formData);
+    setError({});
 
     // Validate dates
-    if (new Date(formData.tanggal_mulai) >= new Date(formData.tanggal_akhir)) {
-      setError("Tanggal selesai harus setelah tanggal mulai");
-      setIsSubmitting(false);
-      return;
-    }
+    // if (new Date(formData.tanggal_mulai) >= new Date(formData.tanggal_akhir)) {
+    //   setError("Tanggal selesai harus setelah tanggal mulai");
+    //   setIsSubmitting(false);
+    //   return;
+    // }
 
     try {
       await post("/information/registration/create", {
@@ -53,9 +52,25 @@ const AddInformasiPendaftaran = () => {
         state: { successMsg: "Informasi pendaftaran berhasil ditambahkan" },
       });
     } catch (err) {
-      setError("Gagal menambahkan informasi pendaftaran. Silakan coba lagi.");
-      console.log(formData);
-      console.log(err);
+      // setError("Gagal menambahkan informasi pendaftaran. Silakan coba lagi.");
+      // console.log(formData);
+      // console.log(err);
+
+      if (err.response && err.response.data.errors) {
+        const errorResponse = err.response.data.errors;
+        const formattedErrors = {};
+
+        errorResponse.forEach((error) => {
+          formattedErrors[error.path] = error.msg;
+        });
+        setError(formattedErrors);
+      } else {
+        setError({
+          general:
+            "Gagal menambahkan informasi pendaftaran. Silakan coba lagi.",
+        });
+      }
+      console.log(error);
       setIsSubmitting(false);
     }
   };
@@ -72,9 +87,9 @@ const AddInformasiPendaftaran = () => {
           </p>
         </div>
 
-        {error && (
+        {error.general && (
           <div className="p-3 mx-6 mt-4 text-red-700 bg-red-100 rounded-md">
-            {error}
+            {error.general}
           </div>
         )}
 
@@ -96,7 +111,11 @@ const AddInformasiPendaftaran = () => {
                   name="nama_gelombang"
                   value={formData.nama_gelombang}
                   onChange={handleChange}
-                  className="shadow-sm bg-white border-[2px] border-gray-300 outline-none text-sm rounded-md focus:ring-red-500 focus:border-red-500 block w-full p-2.5 h-12"
+                  className={`shadow-sm bg-white border-[2px] border-gray-300 outline-none text-sm rounded-md 
+                    ${
+                      error?.nama_gelombang ? "ring-red-500 border-red-500" : ""
+                    } 
+                  focus:ring-red-500 focus:border-red-500 block w-full p-2.5 `}
                   required
                 >
                   <option value="">Pilih Gelombang</option>
@@ -104,6 +123,11 @@ const AddInformasiPendaftaran = () => {
                   <option value="Gelombang 2">Gelombang 2</option>
                   <option value="Gelombang 3">Gelombang 3</option>
                 </select>
+                {error.nama_gelombang && (
+                  <div className="mt-2 text-sm text-red-500">
+                    {error.nama_gelombang}
+                  </div>
+                )}
               </div>
 
               <div className="mb-4 md:col-span-2">
@@ -119,10 +143,17 @@ const AddInformasiPendaftaran = () => {
                   value={formData.deskripsi}
                   onChange={handleChange}
                   rows={4}
-                  className="shadow-sm bg-white border-[2px] border-gray-300 outline-none text-sm rounded-md focus:ring-red-500 focus:border-red-500 block w-full p-2.5"
+                  className={`shadow-sm bg-white border-[2px] border-gray-300 outline-none text-sm rounded-md 
+                    ${error?.deskripsi ? "ring-red-500 border-red-500" : ""} 
+                  focus:ring-red-500 focus:border-red-500 block w-full p-2.5 `}
                   placeholder="Masukkan deskripsi informasi"
                   required
                 />
+                {error.deskripsi && (
+                  <div className="mt-2 text-sm text-red-500">
+                    {error.deskripsi}
+                  </div>
+                )}
               </div>
 
               <div className="mb-4">
@@ -138,10 +169,17 @@ const AddInformasiPendaftaran = () => {
                   name="tahun_ajaran"
                   value={formData.tahun_ajaran}
                   onChange={handleChange}
-                  className="shadow-sm bg-white border-[2px] border-gray-300 outline-none text-sm rounded-md focus:ring-red-500 focus:border-red-500 block w-full p-2.5 h-12"
+                  className={`shadow-sm bg-white border-[2px] border-gray-300 outline-none text-sm rounded-md 
+                    ${error?.tahun_ajaran ? "ring-red-500 border-red-500" : ""} 
+                  focus:ring-red-500 focus:border-red-500 block w-full p-2.5 `}
                   placeholder="Contoh: 2024/2025"
                   required
                 />
+                {error.tahun_ajaran && (
+                  <div className="mt-2 text-sm text-red-500">
+                    {error.tahun_ajaran}
+                  </div>
+                )}
               </div>
 
               <div className="mb-4">
@@ -157,9 +195,18 @@ const AddInformasiPendaftaran = () => {
                   name="tanggal_mulai"
                   value={formData.tanggal_mulai}
                   onChange={handleChange}
-                  className="shadow-sm bg-white border-[2px] border-gray-300 outline-none text-sm rounded-md focus:ring-red-500 focus:border-red-500 block w-full p-2.5 h-12"
+                  className={`shadow-sm bg-white border-[2px] border-gray-300 outline-none text-sm rounded-md 
+                    ${
+                      error?.tanggal_mulai ? "ring-red-500 border-red-500" : ""
+                    } 
+                  focus:ring-red-500 focus:border-red-500 block w-full p-2.5 `}
                   required
                 />
+                {error.tanggal_mulai && (
+                  <div className="mt-2 text-sm text-red-500">
+                    {error.tanggal_mulai}
+                  </div>
+                )}
               </div>
 
               <div className="mb-4">
@@ -175,9 +222,18 @@ const AddInformasiPendaftaran = () => {
                   name="tanggal_akhir"
                   value={formData.tanggal_akhir}
                   onChange={handleChange}
-                  className="shadow-sm bg-white border-[2px] border-gray-300 outline-none text-sm rounded-md focus:ring-red-500 focus:border-red-500 block w-full p-2.5 h-12"
+                  className={`shadow-sm bg-white border-[2px] border-gray-300 outline-none text-sm rounded-md 
+                    ${
+                      error?.tanggal_akhir ? "ring-red-500 border-red-500" : ""
+                    } 
+                  focus:ring-red-500 focus:border-red-500 block w-full p-2.5 `}
                   required
                 />
+                {error.tanggal_akhir && (
+                  <div className="mt-2 text-sm text-red-500">
+                    {error.tanggal_akhir}
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -202,6 +258,7 @@ const AddInformasiPendaftaran = () => {
         </form>
       </div>
     </Dashboard>
+    // <div className="">hello</div>
   );
 };
 
