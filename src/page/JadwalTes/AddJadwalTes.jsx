@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { post, get } from "../../utils/api";
 import Dashboard from "../../template/Dashboard";
 import useTitle from "../../utils/useTitle";
-import formatDateForInput from "../../utils/formatDateForInput";
 
 const AddJadwalTes = () => {
   useTitle("Tambah Informasi Pendaftaran - Dashboard");

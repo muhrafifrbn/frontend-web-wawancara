@@ -33,6 +33,7 @@ import InformasiTes from "./page/InformasiTes";
 import AddInformasiTes from "./page/InformasiTes/AddInformasiTes";
 import JadwalTes from "./page/JadwalTes";
 import AddJadwalTes from "./page/JadwalTes/AddJadwalTes";
+import FormulirPendaftaran from "./page/FormulirPendaftaran";
 
 const App = () => {
   return (
@@ -62,6 +63,10 @@ const App = () => {
               <Route path="/hasilMedical/:id" element={<HasilMedical />} />
               <Route path="/hasilOrtu" element={<HasilOrtu />} />
               <Route path="/user" element={<User />} />
+              <Route
+                path="/formulir-pendaftaran"
+                element={<FormulirPendaftaran />}
+              />
 
               {/* router informasi pendaftaran */}
               <Route

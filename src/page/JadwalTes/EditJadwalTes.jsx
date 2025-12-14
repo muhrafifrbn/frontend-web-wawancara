@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { get, put } from "../../utils/api";
 import ModalContainer from "../../components/DetailModal/ModalContainer";
 import LoadingSpinner from "../../components/DetailModal/LoadingSpinner";
