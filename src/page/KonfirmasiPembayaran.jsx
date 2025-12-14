@@ -1,13 +1,11 @@
 import React, { useState, useEffect, useContext } from "react";
 import Dashboard from "../template/Dashboard";
 import Tabel from "../template/Tabel";
-import { FaEye, FaTrash, FaFilePen } from "react-icons/fa6";
-import { get, deleteData } from "../utils/api";
+import { get, put } from "../utils/api";
 import { useLocation, useNavigate } from "react-router-dom";
 import Notification from "../components/Notification/Notif";
 import useTitle from "../utils/useTitle";
 import { AuthContext } from "../Context/AuthContext";
-import DeleteConfirmation from "../components/Notification/DeleteConfirmation";
 
 const KonfirmasiPembayaran = () => {
   useTitle("Konfirmasi Pembayaran");
@@ -15,11 +13,9 @@ const KonfirmasiPembayaran = () => {
   const navigate = useNavigate();
   const [successMsg, setSuccessMsg] = useState(location.state?.successMsg);
   const [errorMsg, setErrorMsg] = useState(location.state?.errorMsg);
-  const [data, setData] = useState([]); // Dummy data
+  const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [selectedId, setSelectedId] = useState(null);
-  const [showModal, setShowModal] = useState(false);
-  const [showEditModal, setShowEditModal] = useState(false);
+  const [isConfirming, setIsConfirming] = useState(null);
 
   const { state } = useContext(AuthContext);
   const userRole = state?.role;
@@ -33,41 +29,22 @@ const KonfirmasiPembayaran = () => {
     return () => clearTimeout(timer);
   }, [successMsg, errorMsg]);
 
-  const handleOpenModal = (id) => {
-    setSelectedId(id);
-    setShowModal(true);
+  const BASE_URL = import.meta.env.VITE_BASE_URL || "";
+  const getImageSrc = (path) => {
+    if (!path) return "";
+    return path.startsWith("http") ? path : `${BASE_URL}${path.startsWith("/") ? "" : "/"}${path}`;
   };
-
-  const handleOpenEditModal = (id) => {
-    setSelectedId(id);
-    setShowEditModal(true);
-  };
-
-  const handleDelete = DeleteConfirmation({
-    onDelete: (id) => deleteData(`/payment-form/delete/${id}`), // Update route for payment confirmation
-    itemName: "data konfirmasi pembayaran",
-    onSuccess: (id) => {
-      setData(data.filter((item) => item.id !== id)); // Ensure id is correct in data filter
-      setSuccessMsg("Data konfirmasi pembayaran berhasil dihapus");
-    },
-    onError: (error) => {
-      console.error("Error deleting payment confirmation:", error);
-      setErrorMsg("Gagal menghapus data konfirmasi pembayaran");
-    },
-  });
 
   const headTable = [
-    { judul: "Nama Tagihan" },
-    { judul: "Nama Bank" },
-    { judul: "Bukti Bayar" },
-    { judul: "Tanggal Transfer" },
-    { judul: "Jumlah Tagihan" },
+    { judul: "Nomor Pendaftaran" },
+    { judul: "Nama" },
+    { judul: "Bukti Foto" },
     { judul: "Aksi" },
   ];
 
   const fetchData = async () => {
     try {
-      const response = await get("/payment-form"); // Fetch data from payment form route
+      const response = await get("/payment-form");
       setData(response.data);
       setIsLoading(false);
     } catch (err) {
@@ -88,40 +65,50 @@ const KonfirmasiPembayaran = () => {
     return () => clearInterval(refreshData);
   }, []);
 
+  const handleConfirm = async (id) => {
+    try {
+      setIsConfirming(id);
+      const response = await put(`/payment-form/confirm/${id}`);
+      if (response?.status >= 200 && response?.status < 300) {
+        setSuccessMsg("Pembayaran berhasil dikonfirmasi");
+        fetchData();
+      } else {
+        setErrorMsg("Gagal mengkonfirmasi pembayaran");
+      }
+    } catch (error) {
+      setErrorMsg("Gagal mengkonfirmasi pembayaran");
+    } finally {
+      setIsConfirming(null);
+    }
+  };
+
   const renderKonfirmasiPembayaran = (item, index) => (
     <tr className="bg-white border-b" key={item.id || index}>
-      <td className="px-6 py-4 text-gray-900">{item.nama_tagihan}</td>
-      <td className="px-6 py-4 text-gray-900">{item.nama_bank}</td>
-      <td className="px-6 py-4 text-gray-900">{item.bukti_bayar}</td>
       <td className="px-6 py-4 text-gray-900">
-        {new Date(item.tanggal_transfer).toLocaleDateString("id-ID")}
+        {item.registration_number || item.participant_card_number || "-"}
       </td>
-      <td className="px-6 py-4 text-gray-900">{item.jumlah_tagihan}</td>
-      <td className="flex items-center justify-center py-6">
-        <div className="flex items-center justify-between gap-x-5">
-          <button
-            onClick={() => handleOpenModal(item.id)}
-            className="text-red-700 cursor-pointer hover:text-red-500"
-          >
-            <FaEye size={18} />
-          </button>
-          {isAdmin && (
-            <>
-              <button
-                onClick={() => handleOpenEditModal(item.id)}
-                className="text-red-700 cursor-pointer hover:text-red-500"
-              >
-                <FaFilePen size={18} />
-              </button>
-              <button
-                onClick={() => handleDelete(item.id)}
-                className="text-red-700 cursor-pointer hover:text-red-500"
-              >
-                <FaTrash size={18} />
-              </button>
-            </>
-          )}
+      <td className="px-6 py-4 text-gray-900">
+        {item.student_name || item.nama || "-"}
+      </td>
+      <td className="px-6 py-4 text-gray-900">
+        <div className="flex items-center">
+          <img
+            src={getImageSrc(item.bukti_foto || item.bukti_bayar)}
+            alt="Bukti Pembayaran"
+            className="w-24 h-16 object-cover rounded border"
+          />
         </div>
+      </td>
+      <td className="flex items-center justify-center py-6">
+        {isAdmin && (
+          <button
+            onClick={() => handleConfirm(item.id)}
+            disabled={isConfirming === item.id}
+            className={`px-4 py-2 rounded-md text-white ${isConfirming === item.id ? "bg-gray-400" : "bg-red-600 hover:bg-red-500"} active:scale-95`}
+          >
+            {isConfirming === item.id ? "Mengkonfirmasi..." : "Konfirmasi"}
+          </button>
+        )}
       </td>
     </tr>
   );
