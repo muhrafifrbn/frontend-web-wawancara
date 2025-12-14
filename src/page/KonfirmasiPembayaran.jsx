@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useContext } from "react";
 import Dashboard from "../template/Dashboard";
 import Tabel from "../template/Tabel";
-import { get, put } from "../utils/api";
+import { get, put, patch } from "../utils/api"; // Pastikan 'put' didefinisikan di api.js
 import { useLocation, useNavigate } from "react-router-dom";
 import Notification from "../components/Notification/Notif";
 import useTitle from "../utils/useTitle";
 import { AuthContext } from "../Context/AuthContext";
+
 
 const KonfirmasiPembayaran = () => {
   useTitle("Konfirmasi Pembayaran");
@@ -33,30 +34,29 @@ const KonfirmasiPembayaran = () => {
 
   const getImageSrc = (path) => {
     if (!path) return "";
-    // Make sure the path is prefixed with the correct URL to the uploads folder
     return `${url_image}/uploads/payment/${path}`;
   };
 
   const headTable = [
     { judul: "Nomor Pendaftaran" },
     { judul: "Nama" },
+    { judul: "Tagihan" },
     { judul: "Bukti Foto" },
+    { judul: "Jumlah Tagihan" },
+    { judul: "Tanggal Transfer" },
+    { judul: "Konfirmasi" },
     { judul: "Aksi" },
   ];
 
-  // Fetch data pembayaran
   const fetchData = async () => {
     try {
       const response = await get("/payment-form");
       const paymentData = response.data;
 
-      // Ambil detail nomor_formulir dan nama_lengkap dari endpoint /detail/:id untuk setiap item
       const detailedData = await Promise.all(
         paymentData.map(async (item) => {
-          const detailResponse = await get(
-            `/regist-form/detail/${item.id_formulir}`
-          );
-          return { ...item, ...detailResponse.data }; // Gabungkan data pembayaran dengan detail
+          const detailResponse = await get(`/regist-form/detail/${item.id_formulir}`);
+          return { ...item, ...detailResponse.data };
         })
       );
 
@@ -80,16 +80,17 @@ const KonfirmasiPembayaran = () => {
     return () => clearInterval(refreshData);
   }, []);
 
-  // Handle konfirmasi pembayaran
-  const handleConfirm = async (id) => {
+  const handleConfirm = async (id, currentStatus) => {
     try {
       setIsConfirming(id);
-      const response = await put(`/payment-form/confirm/${id}`);
+      const newStatus = currentStatus === 0 ? 1 : 0;  // Toggle the payment confirmation status
+      const response = await patch(`/payment-form/${id}/konfirmasi`, { konfirmasi_pembayaran: newStatus });
       if (response?.status >= 200 && response?.status < 300) {
         setSuccessMsg("Pembayaran berhasil dikonfirmasi");
         fetchData();
       } else {
         setErrorMsg("Gagal mengkonfirmasi pembayaran");
+        console.error("Error response:", response);
       }
     } catch (error) {
       setErrorMsg("Gagal mengkonfirmasi pembayaran");
@@ -99,16 +100,14 @@ const KonfirmasiPembayaran = () => {
   };
 
   const renderKonfirmasiPembayaran = (item, index) => (
-    <tr className="bg-white border-b" key={item.id || index}>
+    <tr className="bg-white border-b" key={`${item.id}-${index}`}> {/* Menggunakan id + index untuk memastikan key unik */}
       <td className="px-6 py-4 text-gray-900">
-        {item.nomor_formulir ||
-          item.registration_number ||
-          item.participant_card_number ||
-          "-"}
+        {item.nomor_formulir || item.registration_number || "-"}
       </td>
       <td className="px-6 py-4 text-gray-900">
-        {item.nama_lengkap || item.student_name || item.nama || "-"}
+        {item.nama_lengkap || item.student_name || "-"}
       </td>
+      <td className="px-6 py-4 text-gray-900">{item.nama_tagihan || "-"}</td>
       <td className="px-6 py-4 text-gray-900">
         <div className="flex items-center">
           <img
@@ -118,18 +117,19 @@ const KonfirmasiPembayaran = () => {
           />
         </div>
       </td>
+      <td className="px-6 py-4 text-gray-900">{item.jumlah_tagihan || "-"}</td>
+      <td className="px-6 py-4 text-gray-900">{item.tanggal_transfer || "-"}</td>
+      <td className="px-6 py-4 text-gray-900">
+        {item.konfirmasi_pembayaran === 1 ? "Dikonfirmasi" : "Belum Dikonfirmasi"}
+      </td>
       <td className="flex items-center justify-center py-6">
         {isAdmin && (
           <button
-            onClick={() => handleConfirm(item.id)}
+            onClick={() => handleConfirm(item.id, item.konfirmasi_pembayaran)}
             disabled={isConfirming === item.id}
-            className={`px-4 py-2 rounded-md text-white ${
-              isConfirming === item.id
-                ? "bg-gray-400"
-                : "bg-red-600 hover:bg-red-500"
-            } active:scale-95`}
+            className={`px-4 py-2 rounded-md text-white ${isConfirming === item.id ? "bg-gray-400" : "bg-red-600 hover:bg-red-500"} active:scale-95`}
           >
-            {isConfirming === item.id ? "Mengkonfirmasi..." : "Konfirmasi"}
+            {isConfirming === item.id ? "Mengkonfirmasi..." : item.konfirmasi_pembayaran === 1 ? "Batal Konfirmasi" : "Konfirmasi"}
           </button>
         )}
       </td>
@@ -138,9 +138,7 @@ const KonfirmasiPembayaran = () => {
 
   return (
     <Dashboard title="Konfirmasi Pembayaran">
-      <h1 className="text-2xl font-bold text-gray-900">
-        Konfirmasi Pembayaran
-      </h1>
+      <h1 className="text-2xl font-bold text-gray-900">Konfirmasi Pembayaran</h1>
 
       <div className="flex flex-col justify-between w-full min-h-[700px] xl:min-h-[calc(100vh-130px)]">
         {successMsg && (
