@@ -120,17 +120,27 @@ const KonfirmasiPembayaran = () => {
       </td>
       <td className="flex items-center justify-center py-6">
         {isAdmin && (
-          <button
-            onClick={() => handleConfirm(item.id)}
-            disabled={isConfirming === item.id}
-            className={`px-4 py-2 rounded-md text-white ${
-              isConfirming === item.id
-                ? "bg-gray-400"
-                : "bg-red-600 hover:bg-red-500"
-            } active:scale-95`}
-          >
-            {isConfirming === item.id ? "Mengkonfirmasi..." : "Konfirmasi"}
-          </button>
+          <div className="flex items-center justify-center">
+            {/* Jika sudah dikonfirmasi, tampilkan badge */}
+            {item.konfirmasi_pembayaran ? (
+              <span className="px-3 py-1 text-white bg-green-500 rounded-full">
+                Sudah Dikonfirmasi
+              </span>
+            ) : (
+              // Jika belum dikonfirmasi, tampilkan tombol konfirmasi
+              <button
+                onClick={() => handleConfirm(item.id)}
+                disabled={isConfirming === item.id} // Menonaktifkan tombol sementara saat sedang mengonfirmasi
+                className={`px-4 py-2 rounded-md text-white ${
+                  isConfirming === item.id
+                    ? "bg-gray-400"
+                    : "bg-red-600 hover:bg-red-500"
+                } active:scale-95`}
+              >
+                {isConfirming === item.id ? "Mengkonfirmasi..." : "Konfirmasi"}
+              </button>
+            )}
+          </div>
         )}
       </td>
     </tr>
