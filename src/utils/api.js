@@ -105,4 +105,14 @@ export const deleteData = async (endpoint) => {
   }
 };
 
+export const patch = async (endpoint, data = {}) => {
+  try {
+    const response = await apiClient.patch(endpoint, data);
+    return response;
+  } catch (error) {
+    console.error("Error in PATCH request:", error);
+    throw error;
+  }
+};
+
 export default apiClient;
