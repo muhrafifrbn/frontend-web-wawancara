@@ -29,10 +29,12 @@ const KonfirmasiPembayaran = () => {
     return () => clearTimeout(timer);
   }, [successMsg, errorMsg]);
 
-  const BASE_URL = import.meta.env.VITE_BASE_URL || "";
+  const url_image = "http://localhost:5500"; // Set a fallback base URL if it's undefined
+
   const getImageSrc = (path) => {
     if (!path) return "";
-    return path.startsWith("http") ? path : `${BASE_URL}${path.startsWith("/") ? "" : "/"}${path}`;
+    // Make sure the path is prefixed with the correct URL to the uploads folder
+    return `${url_image}/uploads/payment/${path}`;
   };
 
   const headTable = [
@@ -42,10 +44,23 @@ const KonfirmasiPembayaran = () => {
     { judul: "Aksi" },
   ];
 
+  // Fetch data pembayaran
   const fetchData = async () => {
     try {
       const response = await get("/payment-form");
-      setData(response.data);
+      const paymentData = response.data;
+
+      // Ambil detail nomor_formulir dan nama_lengkap dari endpoint /detail/:id untuk setiap item
+      const detailedData = await Promise.all(
+        paymentData.map(async (item) => {
+          const detailResponse = await get(
+            `/regist-form/detail/${item.id_formulir}`
+          );
+          return { ...item, ...detailResponse.data }; // Gabungkan data pembayaran dengan detail
+        })
+      );
+
+      setData(detailedData);
       setIsLoading(false);
     } catch (err) {
       setErrorMsg("Gagal Mengambil Data");
@@ -65,6 +80,7 @@ const KonfirmasiPembayaran = () => {
     return () => clearInterval(refreshData);
   }, []);
 
+  // Handle konfirmasi pembayaran
   const handleConfirm = async (id) => {
     try {
       setIsConfirming(id);
@@ -85,17 +101,20 @@ const KonfirmasiPembayaran = () => {
   const renderKonfirmasiPembayaran = (item, index) => (
     <tr className="bg-white border-b" key={item.id || index}>
       <td className="px-6 py-4 text-gray-900">
-        {item.registration_number || item.participant_card_number || "-"}
+        {item.nomor_formulir ||
+          item.registration_number ||
+          item.participant_card_number ||
+          "-"}
       </td>
       <td className="px-6 py-4 text-gray-900">
-        {item.student_name || item.nama || "-"}
+        {item.nama_lengkap || item.student_name || item.nama || "-"}
       </td>
       <td className="px-6 py-4 text-gray-900">
         <div className="flex items-center">
           <img
-            src={getImageSrc(item.bukti_foto || item.bukti_bayar)}
+            src={getImageSrc(item.bukti_bayar)}
             alt="Bukti Pembayaran"
-            className="w-24 h-16 object-cover rounded border"
+            className="object-cover w-24 h-16 border rounded"
           />
         </div>
       </td>
@@ -104,7 +123,11 @@ const KonfirmasiPembayaran = () => {
           <button
             onClick={() => handleConfirm(item.id)}
             disabled={isConfirming === item.id}
-            className={`px-4 py-2 rounded-md text-white ${isConfirming === item.id ? "bg-gray-400" : "bg-red-600 hover:bg-red-500"} active:scale-95`}
+            className={`px-4 py-2 rounded-md text-white ${
+              isConfirming === item.id
+                ? "bg-gray-400"
+                : "bg-red-600 hover:bg-red-500"
+            } active:scale-95`}
           >
             {isConfirming === item.id ? "Mengkonfirmasi..." : "Konfirmasi"}
           </button>
