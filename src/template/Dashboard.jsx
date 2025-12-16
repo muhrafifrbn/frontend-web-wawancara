@@ -11,6 +11,7 @@ import {
   FaUserGear,
   FaFileWaveform,
   FaRegPenToSquare,
+  FaCircleDollarToSlot,
 } from "react-icons/fa6";
 import img from "../images/logo.png";
 import { Link } from "react-router-dom";
@@ -67,6 +68,11 @@ const Dashboard = ({ title, children }) => {
       name: "Informasi Tes",
       ic: <FaRegPenToSquare />,
       to: "/informasi-tes",
+    },
+    {
+      name: "Konfirmasi Pembayaran",
+      ic: <FaCircleDollarToSlot />,
+      to: "/konfirmasi-pembayaran",
     },
     { name: "Jadwal Tes", ic: <FaClockRotateLeft />, to: "/jadwal-tes" },
     { name: "Orang Tua", ic: <FaUser />, to: "/ortu" },
