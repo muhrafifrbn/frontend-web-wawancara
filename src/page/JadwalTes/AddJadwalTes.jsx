@@ -34,7 +34,7 @@ const AddJadwalTes = () => {
         setLoadingGelombang(true);
         setErrorGelombang("");
 
-        const response = await get("/information/registration");
+        const response = await get("/information/registration/active");
 
         setGelombangOptions(response.data);
         console.log("Data gelombang:", response.data);

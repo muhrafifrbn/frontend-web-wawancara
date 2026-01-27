@@ -59,7 +59,7 @@ const FormulirPendaftaran = () => {
     { judul: "Nama Lengkap" },
     { judul: "Jurusan Dipilih" },
     { judul: "Tanggal Lahir" },
-    { judul: "Status Lulus" },
+    { judul: "Hasil Lulus" },
     { judul: "Aksi" },
   ];
 
