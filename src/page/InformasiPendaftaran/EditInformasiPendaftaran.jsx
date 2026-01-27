@@ -240,7 +240,7 @@ const EditInformasiPendaftaran = ({ id, onClose, onUpdate }) => {
             >
               <option value="">Pilih Status Gelombang</option>
               <option value="Aktif">Aktif</option>
-              <option value="Tidak Aktif">Tidak Aktif</option>
+              <option value="Non-Aktif">Tidak Aktif</option>
             </select>
             {errors.status_gelombang && (
               <div className="mt-2 text-sm text-red-500">

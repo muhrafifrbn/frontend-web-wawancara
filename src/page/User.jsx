@@ -184,7 +184,7 @@ const User = () => {
         )}
 
         <Tabel
-          title="Data User"
+          title="User"
           headers={headTable}
           to="/add-user"
           data={isLoading ? [] : data}

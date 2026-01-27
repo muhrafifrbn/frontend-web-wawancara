@@ -1,12 +1,21 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { FaSearch } from 'react-icons/fa';
-import { FaAngleRight, FaAngleLeft } from 'react-icons/fa6';
+import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { FaSearch } from "react-icons/fa";
+import { FaAngleRight, FaAngleLeft } from "react-icons/fa6";
 
-const Tabel = ({ title, headers, children, to, handle, data, itemsPerPage = 5, renderRow }) => {
-  const [searchTerm, setSearchTerm] = useState('');
+const Tabel = ({
+  title,
+  headers,
+  children,
+  to,
+  handle,
+  data,
+  itemsPerPage = 5,
+  renderRow,
+}) => {
+  const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [filteredData, setFilteredData] = useState([]);
   const [currentItemsPerPage, setCurrentItemsPerPage] = useState(itemsPerPage);
@@ -29,8 +38,8 @@ const Tabel = ({ title, headers, children, to, handle, data, itemsPerPage = 5, r
         setFilteredData(data);
       } else {
         // Filter data based on search term
-        const filtered = data.filter(item => {
-          return Object.values(item).some(value => {
+        const filtered = data.filter((item) => {
+          return Object.values(item).some((value) => {
             // Convert to string to handle different value types (numbers, etc.)
             const strValue = String(value).toLowerCase();
             return strValue.includes(searchTerm.toLowerCase());
@@ -46,7 +55,7 @@ const Tabel = ({ title, headers, children, to, handle, data, itemsPerPage = 5, r
   // Calculate pagination values
   const totalItems = filteredData.length;
   const totalPages = Math.max(1, Math.ceil(totalItems / currentItemsPerPage));
-  
+
   // Ensure currentPage is within valid range
   useEffect(() => {
     if (currentPage > totalPages) {
@@ -61,12 +70,14 @@ const Tabel = ({ title, headers, children, to, handle, data, itemsPerPage = 5, r
 
   // Pagination handlers
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
-  const nextPage = () => setCurrentPage(prev => Math.min(prev + 1, totalPages));
-  const prevPage = () => setCurrentPage(prev => Math.max(prev - 1, 1));
+  const nextPage = () =>
+    setCurrentPage((prev) => Math.min(prev + 1, totalPages));
+  const prevPage = () => setCurrentPage((prev) => Math.max(prev - 1, 1));
 
   // Handle items per page change
   const handleItemsPerPageChange = (e) => {
-    const value = e.target.value === 'all' ? filteredData.length : Number(e.target.value);
+    const value =
+      e.target.value === "all" ? filteredData.length : Number(e.target.value);
     setCurrentItemsPerPage(value);
   };
 
@@ -79,15 +90,17 @@ const Tabel = ({ title, headers, children, to, handle, data, itemsPerPage = 5, r
     if (totalItems === 0) {
       return (
         <tr>
-          <td colSpan={headers.length} className="text-center py-4">
-            {data.length === 0 ? 'Tidak Ada Data' : 'Tidak ditemukan hasil pencarian'}
+          <td colSpan={headers.length} className="py-4 text-center">
+            {data.length === 0
+              ? "Tidak Ada Data"
+              : "Tidak ditemukan hasil pencarian"}
           </td>
         </tr>
       );
     }
 
     // If renderRow prop provided, use it to render rows
-    if (renderRow && typeof renderRow === 'function') {
+    if (renderRow && typeof renderRow === "function") {
       return currentItems.map((item, index) => renderRow(item, index));
     }
 
@@ -98,11 +111,9 @@ const Tabel = ({ title, headers, children, to, handle, data, itemsPerPage = 5, r
   return (
     <div>
       <div className="flex items-end justify-between py-5 text-lg font-semibold text-left text-gray-900 bg-white shadow-sm sm:p-5 rtl:text-right">
-        <div className='w-[70%]'>
-          <div className='flex items-center justify-between w-full'>
-            <h1 className='text-xl font-semibold'>
-              Data {title}
-            </h1>
+        <div className="w-[70%]">
+          <div className="flex items-center justify-between w-full">
+            <h1 className="text-xl font-semibold">Data {title}</h1>
           </div>
           <p className="mt-1 text-sm font-normal text-gray-800">
             Tabel berisi data {title} harap melakukan cek rutin terhadap data
@@ -110,22 +121,22 @@ const Tabel = ({ title, headers, children, to, handle, data, itemsPerPage = 5, r
         </div>
 
         {/* Search and Add buttons on the right */}
-        <div className="flex flex-col sm:flex-row gap-2 items-end">
+        <div className="flex flex-col items-end gap-2 sm:flex-row">
           <div className="relative">
             <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-              <FaSearch className="text-gray-400 w-4 h-4" />
+              <FaSearch className="w-4 h-4 text-gray-400" />
             </div>
             <input
               type="text"
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm font-normal rounded-lg focus:ring-maroon focus:border-maroon block w-full pl-10 p-2"
+              className="block w-full p-2 pl-10 text-sm font-normal text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-maroon focus:border-maroon"
               placeholder="Cari data..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
           {to && (
-            <Link 
-              className='px-2 py-2 text-[13px] whitespace-nowrap sm:text-sm text-white rounded-lg lg:px-4 bg-maroon hover:bg-red-800 active:scale-95 transition-all'
+            <Link
+              className="px-2 py-2 text-[13px] whitespace-nowrap sm:text-sm text-white rounded-lg lg:px-4 bg-maroon hover:bg-red-800 active:scale-95 transition-all"
               to={to}
             >
               Tambah Data
@@ -135,7 +146,7 @@ const Tabel = ({ title, headers, children, to, handle, data, itemsPerPage = 5, r
       </div>
 
       <div className="relative overflow-x-auto shadow-sm custom-scrollbar">
-        <table className="relative w-full text-sm text-left text-gray-500 rtl:text-right border-collapse">
+        <table className="relative w-full text-sm text-left text-gray-500 border-collapse rtl:text-right">
           <thead className="text-xs text-white uppercase bg-maroon">
             <tr>
               {headers.map((item, i) => (
@@ -145,16 +156,14 @@ const Tabel = ({ title, headers, children, to, handle, data, itemsPerPage = 5, r
               ))}
             </tr>
           </thead>
-          <tbody>
-            {Array.isArray(data) ? renderChildren() : children}
-          </tbody>
+          <tbody>{Array.isArray(data) ? renderChildren() : children}</tbody>
         </table>
       </div>
 
       {/* Pagination controls - only show if we have data */}
       {Array.isArray(data) && data.length > 0 && (
-        <div className="flex flex-col sm:flex-row items-center justify-between mt-4 px-2 gap-y-3">
-          {/* <div className="flex items-center gap-2 border border-gray-900 p-2 rounded-lg">
+        <div className="flex flex-col items-center justify-between px-2 mt-4 sm:flex-row gap-y-3">
+          {/* <div className="flex items-center gap-2 p-2 border border-gray-900 rounded-lg">
             <span className="text-sm font-medium text-gray-700">Per halaman</span>
             <hr className=' broder-grey-900'/>
             <select
@@ -169,13 +178,19 @@ const Tabel = ({ title, headers, children, to, handle, data, itemsPerPage = 5, r
               <option value="all">Semua</option>
             </select>
           </div> */}
-          <div className="flex items-center gap-2 border p-2 border-gray-900 rounded-lg relative">
-            <span className="text-sm font-medium text-gray-700">Per halaman</span>
+          <div className="relative flex items-center gap-2 p-2 border border-gray-900 rounded-lg">
+            <span className="text-sm font-medium text-gray-700">
+              Per halaman
+            </span>
             <div className="h-full ml-2 absolute left-[calc(50%-1px)] top-0 w-px bg-gray-900"></div>
             <select
-              value={currentItemsPerPage >= filteredData.length ? 'all' : currentItemsPerPage}
+              value={
+                currentItemsPerPage >= filteredData.length
+                  ? "all"
+                  : currentItemsPerPage
+              }
               onChange={handleItemsPerPageChange}
-              className="border-none focus:ring-0 text-sm p-0 bg-white"
+              className="p-0 text-sm bg-white border-none focus:ring-0"
             >
               <option value={5}>5</option>
               <option value={10}>10</option>
@@ -186,11 +201,19 @@ const Tabel = ({ title, headers, children, to, handle, data, itemsPerPage = 5, r
           </div>
           <div className="flex items-center justify-between w-full sm:w-auto gap-x-4">
             <div className="text-sm text-gray-700">
-              Menampilkan {totalItems === 0 ? 0 : (currentPage - 1) * currentItemsPerPage + 1} - {Math.min(currentPage * currentItemsPerPage, totalItems)} dari {totalItems} data
+              Menampilkan{" "}
+              {totalItems === 0
+                ? 0
+                : (currentPage - 1) * currentItemsPerPage + 1}{" "}
+              - {Math.min(currentPage * currentItemsPerPage, totalItems)} dari{" "}
+              {totalItems} data
             </div>
-            
+
             {totalPages > 1 && (
-              <nav className="flex items-center gap-x-1" aria-label="Pagination">
+              <nav
+                className="flex items-center gap-x-1"
+                aria-label="Pagination"
+              >
                 <button
                   type="button"
                   className="min-h-[38px] min-w-[38px] py-1 px-2 inline-flex items-center gap-x-1 text-sm text-gray-700 bg-white hover:bg-gray-100 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-maroon disabled:opacity-50 disabled:pointer-events-none"
@@ -201,23 +224,69 @@ const Tabel = ({ title, headers, children, to, handle, data, itemsPerPage = 5, r
                   <FaAngleLeft className="w-4 h-4" />
                   <span className="hidden sm:inline">Prev</span>
                 </button>
-                
+
                 <div className="flex items-center gap-x-1">
-                  {Array.from({ length: totalPages }, (_, i) => (
-                    <button
-                      key={i}
-                      onClick={() => paginate(i + 1)}
-                      className={`min-h-[38px] min-w-[38px] py-1 px-2 inline-flex items-center justify-center text-sm rounded-md focus:outline-none focus:ring-1 focus:ring-maroon ${
-                        currentPage === i + 1
-                          ? 'bg-maroon text-white'
-                          : 'text-gray-700 bg-white hover:bg-gray-100 border border-gray-300'
-                      }`}
-                    >
-                      {i + 1}
-                    </button>
-                  ))}
+                  {(() => {
+                    // Logika untuk menentukan angka halaman (Smart Pagination)
+                    let pages = [];
+                    if (totalPages <= 7) {
+                      // Jika halaman sedikit, tampilkan semua
+                      pages = Array.from(
+                        { length: totalPages },
+                        (_, i) => i + 1
+                      );
+                    } else {
+                      // Jika halaman banyak, gunakan '...'
+                      if (currentPage <= 4) {
+                        // Posisi di awal: 1 2 3 4 5 ... 100
+                        pages = [1, 2, 3, 4, 5, "...", totalPages];
+                      } else if (currentPage >= totalPages - 3) {
+                        // Posisi di akhir: 1 ... 96 97 98 99 100
+                        pages = [
+                          1,
+                          "...",
+                          totalPages - 4,
+                          totalPages - 3,
+                          totalPages - 2,
+                          totalPages - 1,
+                          totalPages,
+                        ];
+                      } else {
+                        // Posisi di tengah: 1 ... 49 50 51 ... 100
+                        pages = [
+                          1,
+                          "...",
+                          currentPage - 1,
+                          currentPage,
+                          currentPage + 1,
+                          "...",
+                          totalPages,
+                        ];
+                      }
+                    }
+
+                    return pages.map((page, index) => (
+                      <button
+                        key={index}
+                        // Hanya jalan jika page adalah angka, bukan '...'
+                        onClick={() =>
+                          typeof page === "number" && paginate(page)
+                        }
+                        disabled={typeof page !== "number"}
+                        className={`min-h-[38px] min-w-[38px] py-1 px-2 inline-flex items-center justify-center text-sm rounded-md focus:outline-none focus:ring-1 focus:ring-maroon ${
+                          page === currentPage
+                            ? "bg-maroon text-white" // Style Halaman Aktif
+                            : typeof page !== "number"
+                            ? "text-gray-500 bg-white border-none cursor-default" // Style untuk tanda '...'
+                            : "text-gray-700 bg-white hover:bg-gray-100 border border-gray-300" // Style Halaman Biasa
+                        }`}
+                      >
+                        {page}
+                      </button>
+                    ));
+                  })()}
                 </div>
-                
+
                 <button
                   type="button"
                   className="min-h-[38px] min-w-[38px] py-1 px-2 inline-flex items-center gap-x-1 text-sm text-gray-700 bg-white hover:bg-gray-100 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-maroon disabled:opacity-50 disabled:pointer-events-none"

@@ -68,10 +68,10 @@ const App = () => {
                 path="/konfirmasi-pembayaran"
                 element={<KonfirmasiPembayaran />}
               />
-              <Route
+              {/* <Route
                 path="/formulir-pendaftaran"
                 element={<FormulirPendaftaran />}
-              />
+              /> */}
 
               {/* router informasi pendaftaran */}
               <Route

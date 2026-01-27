@@ -15,7 +15,6 @@ const DetailJadwalTes = ({ id, onClose }) => {
       try {
         const response = await get(`/information/schedule-test/${id}`);
         const response_tes = await get("/information/test");
-        console.log(response.data);
         setDetail(response.data);
         setTes(response_tes.data);
       } catch (error) {
@@ -26,6 +25,33 @@ const DetailJadwalTes = ({ id, onClose }) => {
     };
     fetchDetail();
   }, [id]);
+
+  // Fungsi untuk mengolah JSON Ruangan agar rapi tapi tetap seirama dengan UI asli
+  const formatRuangan = (jsonString) => {
+    try {
+      const data = JSON.parse(jsonString);
+      return (
+        <div className="flex flex-col gap-y-1">
+          {Object.entries(data).map(([key, value]) => {
+            // Mengubah 'tes_kesehatan' menjadi 'Tes Kesehatan'
+            const formattedKey = key
+              .replace(/_/g, " ")
+              .replace(/\b\w/g, (l) => l.toUpperCase());
+
+            return (
+              <div key={key} className="text-[14px] leading-relaxed">
+                <span className="font-normal">{formattedKey}:</span>{" "}
+                <span className="font-bold text-gray-900">{value}</span>
+              </div>
+            );
+          })}
+        </div>
+      );
+    } catch (e) {
+      // Jika bukan JSON, tampilkan teks aslinya dengan style standar
+      return <span className="font-semibold text-gray-900">{jsonString}</span>;
+    }
+  };
 
   return (
     <ModalContainer
@@ -42,23 +68,24 @@ const DetailJadwalTes = ({ id, onClose }) => {
               label="Tanggal Tes"
               value={new Date(detail.tanggal_tes).toLocaleDateString("id-ID")}
             />
-            <InfoItem
-              label="Jam Mulai"
-              value={detail.jam_mulai?.slice(0, 5)} // Format "HH:MM"
-            />
+            <InfoItem label="Jam Mulai" value={detail.jam_mulai?.slice(0, 5)} />
             <InfoItem
               label="Jam Selesai"
               value={detail.jam_selesai?.slice(0, 5)}
             />
+
+            {/* Bagian ini yang kita olah datanya agar tidak muncul format JSON */}
             <InfoItem
               label="Informasi Ruangan"
-              value={detail.informasi_ruangan}
+              value={formatRuangan(detail.informasi_ruangan)}
             />
+
             <InfoItem
               label="Gelombang"
               value={detail.nama_gelombang ?? detail.id_gelombang}
             />
           </InfoSection>
+
           <div className="p-4 rounded-lg bg-gray-50">
             <div className="mb-1 text-sm text-gray-500">
               Informasi Tes yang akan dilakukan
