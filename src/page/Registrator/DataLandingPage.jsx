@@ -142,7 +142,7 @@ const DataLandingPage = () => {
   };
 
   return (
-    <Dashboard>
+    <Dashboard title="Data Landing Page">
       <div className="flex flex-col justify-between w-full min-h-[700px] xl:min-h-[calc(100vh-130px)]">
         {successMsg && (
           <Notification

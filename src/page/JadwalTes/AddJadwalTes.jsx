@@ -25,7 +25,7 @@ const AddJadwalTes = () => {
   //   Untuk gelombang
   const [gelombangOptions, setGelombangOptions] = useState([]);
   const [loadingGelombang, setLoadingGelombang] = useState(true);
-  const [errorGelombang, setErrorGelombang] = useState("");
+  const [errorGelombang, setErrorGelombang] = useState(``);
   const [selectedGelombang, setSelectedGelombang] = useState(null);
 
   useEffect(() => {
@@ -39,8 +39,17 @@ const AddJadwalTes = () => {
         setGelombangOptions(response.data);
         console.log("Data gelombang:", response.data);
       } catch (error) {
-        console.error("Error fetching data:", error);
-        setErrorGelombang("Gagal memuat data gelombang");
+        // console.log(error.response.data.msg);
+        if (error.response.data.msg) {
+          setErrorGelombang(
+            `Tidak ada gelombang PPDB yang aktif saat ini. Saat ini anda di tanggal ${new Date().getDate()}/${new Date().getMonth() + 1}/${new Date().getFullYear()}.\n
+             Harap cek jadwal pendaftaran PPDB.
+            `,
+          );
+        } else {
+          console.error("Error fetching data:", error);
+          setErrorGelombang("Gagal memuat data gelombang");
+        }
       } finally {
         setLoadingGelombang(false);
       }
@@ -66,7 +75,7 @@ const AddJadwalTes = () => {
     // Ambil data gelombang yang dipilih
     if (formData.id_gelombang) {
       const selected = gelombangOptions.find(
-        (gelombang) => gelombang.id === parseInt(formData.id_gelombang)
+        (gelombang) => gelombang.id === parseInt(formData.id_gelombang),
       );
       // console.log("Tipe formData.id_gelombang:");
       // console.log("Tipe gelombang.id:", selected?.id);
@@ -113,7 +122,7 @@ const AddJadwalTes = () => {
         setError((prevError) => ({
           ...prevError,
           tanggal_tes: `Jadwal tes harus berada di antara ${mulai.toLocaleDateString(
-            "id-ID"
+            "id-ID",
           )} dan ${selesai.toLocaleDateString("id-ID")}.`,
         }));
         setIsSubmitting(false);
@@ -442,7 +451,7 @@ const AddJadwalTes = () => {
 
                   {gelombangOptions.map((item) => (
                     <option key={item.id} value={item.id}>
-                      {item.nama_gelombang}
+                      {item.nama_gelombang} - {item.tahun_ajaran}
                     </option>
                   ))}
                 </select>
