@@ -35,12 +35,12 @@ const EditSiswa = ({ id, onClose, onUpdate }) => {
       const dataToSubmit = { ...formData };
       if (dataToSubmit.date_of_birth) {
         dataToSubmit.date_of_birth = formatDateForInput(
-          dataToSubmit.date_of_birth
+          dataToSubmit.date_of_birth,
         );
       }
       if (dataToSubmit.interview_date) {
         dataToSubmit.interview_date = formatDateForInput(
-          dataToSubmit.interview_date
+          dataToSubmit.interview_date,
         );
       }
       await put(`/students/update/${id}`, dataToSubmit);
@@ -338,43 +338,40 @@ const EditSiswa = ({ id, onClose, onUpdate }) => {
                   Pilih Jawaban
                 </option>
                 <option
-                  value="Rekayasa Perangkat Lunak dan Gim"
+                  value="Pengembangan Perangkat Lunak dan Gim"
                   className="text-gray-500"
                 >
-                  Rekayasa Perangkat Lunak dan Gim
+                  Pengembangan Perangkat Lunak dan Gim
                 </option>
                 <option
-                  value="Desain Komunikasi Visual Reguler"
+                  value="Desain Komunikasi Visual"
                   className="text-gray-500"
                 >
-                  Desain Komunikasi Visual Reguler
+                  Desain Komunikasi Visual
                 </option>
                 <option
-                  value="Desain Komunikasi Visual Bilingual"
+                  value="Manajemen Perkantoran dan Layanan Bisnis"
                   className="text-gray-500"
                 >
-                  Desain Komunikasi Visual Bilingual
+                  Manajemen Perkantoran dan Layanan Bisnis
                 </option>
                 <option
-                  value="Manajemen Pekantoran dan Layanan Bisnis Reguer"
+                  value="Bisnis Daring Pemasaran"
                   className="text-gray-500"
                 >
-                  Manajemen Pekantoran dan Layanan Bisnis Reguler
+                  Bisnis Daring Pemasaran
                 </option>
                 <option
-                  value="Manajemen Pekantoran dan Layanan Bisnis Bilingual"
+                  value="Akuntansi Keuangan Lembaga"
                   className="text-gray-500"
                 >
-                  Manajemen Pekantoran dan Layanan Bisnis Bilingual
+                  Akuntansi Keuangan Lembaga
                 </option>
                 <option
-                  value="Pemasaran dan Bisnis Retail"
+                  value="Teknik Jaringan Komputer dan Telekomunikasi"
                   className="text-gray-500"
                 >
-                  Pemasaran dan Bisnis Retail
-                </option>
-                <option value="Akutansi dan Keuangan" className="text-gray-500">
-                  Akutansi dan Keuangan
+                  Teknik Jaringan Komputer dan Telekomunikasi
                 </option>
               </select>
             </div>

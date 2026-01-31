@@ -106,7 +106,7 @@ const JadwalTes = () => {
         console.error(
           "Gagal parse informasi_ruangan:",
           e,
-          item.informasi_ruangan
+          item.informasi_ruangan,
         );
         infoRuangan = {};
       }
@@ -116,8 +116,8 @@ const JadwalTes = () => {
       <tr className="bg-white border-b" key={item.id || index}>
         {/* 1. Tanggal Tes */}
         <td className="px-6 py-4 text-gray-900">
-          {item.tanggal_tes
-            ? new Date(item.tanggal_tes).toLocaleDateString("id-ID")
+          {item.tanggal_test
+            ? new Date(item.tanggal_test).toLocaleDateString("id-ID")
             : "-"}
         </td>
 
