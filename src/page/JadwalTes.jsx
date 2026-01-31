@@ -58,14 +58,7 @@ const JadwalTes = () => {
     },
   });
 
-  const headTable = [
-    { judul: "Tanggal Tes" },
-    { judul: "Jam Mulai" },
-    { judul: "Jam Selesai" },
-    { judul: "Informasi Ruangan" },
-    { judul: "Nama Gelombang" },
-    { judul: "Aksi" },
-  ];
+  const headTable = [{ judul: "Tanggal Tes" }, { judul: "Jam Mulai" }, { judul: "Jam Selesai" }, { judul: "Informasi Ruangan" }, { judul: "Nama Gelombang" }, { judul: "Aksi" }];
 
   const fetchData = async () => {
     try {
@@ -103,11 +96,7 @@ const JadwalTes = () => {
         }
         // console.log(infoRuangan);
       } catch (e) {
-        console.error(
-          "Gagal parse informasi_ruangan:",
-          e,
-          item.informasi_ruangan,
-        );
+        console.error("Gagal parse informasi_ruangan:", e, item.informasi_ruangan);
         infoRuangan = {};
       }
     }
@@ -115,11 +104,7 @@ const JadwalTes = () => {
     return (
       <tr className="bg-white border-b" key={item.id || index}>
         {/* 1. Tanggal Tes */}
-        <td className="px-6 py-4 text-gray-900">
-          {item.tanggal_test
-            ? new Date(item.tanggal_test).toLocaleDateString("id-ID")
-            : "-"}
-        </td>
+        <td className="px-6 py-4 text-gray-900">{item.tanggal_tes ? new Date(item.tanggal_tes).toLocaleDateString("id-ID") : "-"}</td>
 
         {/* 2. Jam Mulai */}
         <td className="px-6 py-4 text-gray-900">{item.jam_mulai || "-"}</td>
@@ -150,31 +135,20 @@ const JadwalTes = () => {
         </td>
 
         {/* 5. Nama Gelombang */}
-        <td className="px-6 py-4 text-gray-900">
-          {item.nama_gelombang || "-"}
-        </td>
+        <td className="px-6 py-4 text-gray-900">{item.nama_gelombang || "-"}</td>
 
         {/* 6. Aksi */}
         <td className="flex items-center justify-center py-6">
           <div className="flex items-center justify-between gap-x-5">
-            <button
-              onClick={() => handleOpenModal(item.id)}
-              className="text-red-700 cursor-pointer hover:text-red-500"
-            >
+            <button onClick={() => handleOpenModal(item.id)} className="text-red-700 cursor-pointer hover:text-red-500">
               <FaEye size={18} />
             </button>
             {isAdmin && (
               <>
-                <button
-                  onClick={() => handleOpenEditModal(item.id)}
-                  className="text-red-700 cursor-pointer hover:text-red-500"
-                >
+                <button onClick={() => handleOpenEditModal(item.id)} className="text-red-700 cursor-pointer hover:text-red-500">
                   <FaFilePen size={18} />
                 </button>
-                <button
-                  onClick={() => handleDelete(item.id)}
-                  className="text-red-700 cursor-pointer hover:text-red-500"
-                >
+                <button onClick={() => handleDelete(item.id)} className="text-red-700 cursor-pointer hover:text-red-500">
                   <FaTrash size={18} />
                 </button>
               </>
@@ -190,30 +164,11 @@ const JadwalTes = () => {
       <h1 className="text-2xl font-bold text-gray-900">Jadwal Tes</h1>
 
       <div className="flex flex-col justify-between w-full min-h-[700px] xl:min-h-[calc(100vh-130px)]">
-        {successMsg && (
-          <Notification
-            type="success"
-            message={successMsg}
-            onClose={() => setSuccessMsg("")}
-          />
-        )}
+        {successMsg && <Notification type="success" message={successMsg} onClose={() => setSuccessMsg("")} />}
 
-        {errorMsg && (
-          <Notification
-            type="error"
-            message={errorMsg}
-            onClose={() => setErrorMsg("")}
-          />
-        )}
+        {errorMsg && <Notification type="error" message={errorMsg} onClose={() => setErrorMsg("")} />}
 
-        <Tabel
-          title="Jadwal Tes"
-          headers={headTable}
-          to="/add-jadwal-tes"
-          data={isLoading ? [] : data}
-          itemsPerPage={5}
-          renderRow={renderJadwalTesRow}
-        >
+        <Tabel title="Jadwal Tes" headers={headTable} to="/add-jadwal-tes" data={isLoading ? [] : data} itemsPerPage={5} renderRow={renderJadwalTesRow}>
           {isLoading && (
             <tr>
               <td colSpan={headTable.length} className="py-4 text-center">
@@ -223,20 +178,9 @@ const JadwalTes = () => {
           )}
         </Tabel>
 
-        {showModal && (
-          <DetailJadwalTes
-            id={selectedId}
-            onClose={() => setShowModal(false)}
-          />
-        )}
+        {showModal && <DetailJadwalTes id={selectedId} onClose={() => setShowModal(false)} />}
 
-        {showEditModal && (
-          <EditJadwalTes
-            id={selectedId}
-            onClose={() => setShowEditModal(false)}
-            onUpdate={fetchData}
-          />
-        )}
+        {showEditModal && <EditJadwalTes id={selectedId} onClose={() => setShowEditModal(false)} onUpdate={fetchData} />}
       </div>
     </Dashboard>
   );
